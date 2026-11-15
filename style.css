@@ -1,0 +1,530 @@
+
+/* =====================================
+   JYOTISH ASTROLOGY WEBSITE
+   Traditional maroon, gold and ivory
+===================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --maroon: #791d35;
+    --dark-maroon: #501326;
+    --gold: #b58a36;
+    --light-gold: #dfc17a;
+    --cream: #faf5e9;
+    --white: #fffdf8;
+    --text: #49352e;
+}
+
+/* Main page */
+
+body {
+    font-family: Georgia, "Noto Serif", serif;
+    background:
+        radial-gradient(circle at 10% 15%, #f1dfb7 0, transparent 28%),
+        radial-gradient(circle at 90% 80%, #f0dfbb 0, transparent 30%),
+        var(--cream);
+    color: var(--text);
+    padding: 25px 15px;
+    min-height: 100vh;
+}
+
+/* Main decorative border */
+
+.page-shell {
+    max-width: 1050px;
+    margin: auto;
+    padding: 32px;
+    background: var(--white);
+    border: 2px solid var(--gold);
+    outline: 1px solid var(--maroon);
+    outline-offset: -9px;
+    position: relative;
+    box-shadow: 0 12px 40px rgba(70, 35, 20, 0.12);
+}
+
+.page-shell::before,
+.page-shell::after {
+    content: "❧";
+    position: absolute;
+    color: var(--gold);
+    font-size: 35px;
+}
+
+.page-shell::before {
+    top: 12px;
+    left: 15px;
+}
+
+.page-shell::after {
+    bottom: 12px;
+    right: 15px;
+}
+
+/* Header */
+
+.site-header {
+    text-align: center;
+    padding: 28px 15px 25px;
+}
+
+.om-emblem {
+    width: 78px;
+    height: 78px;
+    margin: 0 auto 16px;
+    border: 3px solid var(--gold);
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff8dc, #ead19a);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+    box-shadow: 0 0 0 5px #f8edd1;
+}
+
+.eyebrow {
+    color: var(--gold);
+    letter-spacing: 3px;
+    font-size: 11px;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.site-header h1 {
+    color: var(--maroon);
+    font-size: clamp(25px, 5vw, 39px);
+    margin-bottom: 8px;
+}
+
+.site-header h2 {
+    color: var(--gold);
+    font-size: 19px;
+    font-weight: normal;
+}
+
+.header-description {
+    margin: 15px auto 0;
+    max-width: 550px;
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+/* Decorative divider */
+
+.gold-divider {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    max-width: 320px;
+    margin: 22px auto;
+    color: var(--gold);
+}
+
+.gold-divider::before,
+.gold-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--light-gold);
+}
+
+.gold-divider span {
+    font-size: 20px;
+}
+
+/* Intro section */
+
+.intro-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 35px;
+    padding: 25px 15px 40px;
+}
+
+.intro-text h2 {
+    color: var(--maroon);
+    font-size: 27px;
+    line-height: 1.35;
+    margin-bottom: 15px;
+}
+
+.intro-text > p:not(.eyebrow) {
+    line-height: 1.8;
+    font-size: 14px;
+}
+
+.intro-note {
+    margin-top: 15px;
+    padding-left: 13px;
+    border-left: 3px solid var(--gold);
+}
+
+/* Astrology artwork */
+
+.astrology-art {
+    text-align: center;
+    padding: 15px;
+}
+
+.sun-mark {
+    width: 195px;
+    height: 195px;
+    margin: auto;
+    position: relative;
+    border-radius: 50%;
+    background: repeating-conic-gradient(
+        from 0deg,
+        #d5ae56 0deg 3deg,
+        transparent 3deg 15deg
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.zodiac-ring {
+    position: absolute;
+    inset: 17px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    background: #fffaf0;
+}
+
+.zodiac-symbol {
+    position: absolute;
+    color: var(--maroon);
+    font-size: 19px;
+    transform: translate(-50%, -50%);
+}
+
+.zodiac-symbol:nth-child(1) {
+    top: 5%;
+    left: 50%;
+}
+
+.zodiac-symbol:nth-child(2) {
+    top: 13%;
+    left: 76%;
+}
+
+.zodiac-symbol:nth-child(3) {
+    top: 29%;
+    left: 91%;
+}
+
+.zodiac-symbol:nth-child(4) {
+    top: 50%;
+    left: 95%;
+}
+
+.zodiac-symbol:nth-child(5) {
+    top: 72%;
+    left: 87%;
+}
+
+.zodiac-symbol:nth-child(6) {
+    top: 88%;
+    left: 69%;
+}
+
+.zodiac-symbol:nth-child(7) {
+    top: 95%;
+    left: 50%;
+}
+
+.zodiac-symbol:nth-child(8) {
+    top: 86%;
+    left: 25%;
+}
+
+.zodiac-symbol:nth-child(9) {
+    top: 69%;
+    left: 9%;
+}
+
+.zodiac-symbol:nth-child(10) {
+    top: 49%;
+    left: 5%;
+}
+
+.zodiac-symbol:nth-child(11) {
+    top: 27%;
+    left: 12%;
+}
+
+.zodiac-symbol:nth-child(12) {
+    top: 12%;
+    left: 28%;
+}
+
+.sun-center {
+    position: relative;
+    z-index: 2;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: #f2dfad;
+    border: 2px solid var(--gold);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+}
+
+/* Kundli chart */
+
+.kundli-card {
+    margin: 25px auto 0;
+    max-width: 185px;
+    color: var(--maroon);
+}
+
+.kundli-diagram {
+    width: 135px;
+    height: 135px;
+    border: 2px solid var(--gold);
+    margin: auto;
+    position: relative;
+    transform: rotate(45deg);
+    background: #fff9eb;
+}
+
+.kundli-line {
+    position: absolute;
+    background: var(--maroon);
+    opacity: 0.7;
+}
+
+.line-one {
+    height: 1px;
+    width: 100%;
+    top: 50%;
+}
+
+.line-two {
+    height: 1px;
+    width: 100%;
+    top: 50%;
+    transform: rotate(90deg);
+}
+
+.line-three {
+    height: 1px;
+    width: 100%;
+    top: 50%;
+    transform: rotate(45deg);
+}
+
+.line-four {
+    height: 1px;
+    width: 100%;
+    top: 50%;
+    transform: rotate(-45deg);
+}
+
+.kundli-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--maroon);
+    font-size: 19px;
+    transform: rotate(-45deg);
+}
+
+.kundli-card > p {
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.kundli-card > span {
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+/* Registration form */
+
+.registration-form {
+    max-width: 620px;
+    margin: 0 auto 25px;
+    padding: 30px;
+    background: #fffaf0;
+    border: 1px solid var(--light-gold);
+    border-radius: 5px;
+}
+
+.form-heading {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.heading-symbol {
+    color: var(--gold);
+    font-size: 24px;
+}
+
+.form-heading h2 {
+    color: var(--maroon);
+    font-size: 27px;
+    margin: 8px 0;
+}
+
+.form-heading p {
+    color: #947344;
+    font-size: 14px;
+}
+
+/* Form fields */
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--dark-maroon);
+    margin-bottom: 8px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 13px;
+    font-family: inherit;
+    font-size: 14px;
+    border: 1px solid #d8c49c;
+    border-radius: 4px;
+    background: #fffefa;
+    color: var(--text);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(181, 138, 54, 0.13);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.required-note {
+    font-size: 12px;
+    color: #866c52;
+    margin-bottom: 15px;
+}
+
+/* Submit button */
+
+button[type="submit"] {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid var(--gold);
+    border-radius: 4px;
+    background: var(--maroon);
+    color: white;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+button[type="submit"]:hover {
+    background: var(--dark-maroon);
+    transform: translateY(-2px);
+}
+
+button[type="submit"] span {
+    margin-left: 8px;
+    color: var(--light-gold);
+}
+
+#formMessage {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Footer */
+
+.site-footer {
+    text-align: center;
+    padding: 10px 10px 20px;
+    color: var(--maroon);
+}
+
+.site-footer p:first-of-type {
+    font-size: 19px;
+    margin-bottom: 8px;
+}
+
+.site-footer p:last-of-type {
+    color: #947344;
+    font-size: 12px;
+}
+
+/* Mobile responsive design */
+
+@media (max-width: 700px) {
+
+    body {
+        padding: 12px 8px;
+    }
+
+    .page-shell {
+        padding: 20px 16px;
+    }
+
+    .site-header {
+        padding: 25px 8px;
+    }
+
+    .intro-section {
+        grid-template-columns: 1fr;
+        gap: 25px;
+        text-align: center;
+    }
+
+    .intro-text h2 {
+        font-size: 23px;
+    }
+
+    .registration-form {
+        padding: 22px 16px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .sun-mark {
+        width: 165px;
+        height: 165px;
+    }
+
+    .kundli-diagram {
+        width: 115px;
+        height: 115px;
+    }
+
+    .page-shell::before,
+    .page-shell::after {
+        font-size: 25px;
+    }
+}
