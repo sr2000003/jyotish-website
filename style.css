@@ -73,7 +73,7 @@ body {
 
 .page-shell::before,
 .page-shell::after {
-    content: "❧";
+    content: "ॐ";
     position: absolute;
     color: var(--gold);
     font-size: 35px;
@@ -495,7 +495,7 @@ body {
     box-shadow: 0 15px 40px rgba(79, 19, 38, 0.25);
     padding: 18px;
     z-index: 100;
-    overflow: hidden;
+    overflow: hidden; /* Traps the seasonal background animation inside the popup boundaries */
     transform-origin: top left;
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -512,7 +512,7 @@ body {
     justify-content: space-between;
     margin-bottom: 15px;
     position: relative;
-    z-index: 2;
+    z-index: 2; /* Keeps interactive elements above the dim background */
 }
 
 .calendar-header h3 {
@@ -631,59 +631,25 @@ body {
     box-shadow: 0 4px 15px rgba(121, 29, 53, 0.4);
 }
 
-/* Seasonal Animated Backgrounds */
-.calendar-popup::before {
-    content: "";
+/* =====================================
+   NEW: SEASONAL ANIMATED LAYER (Snow Fall)
+===================================== */
+.seasonal-bg {
     position: absolute;
     inset: 0;
-    opacity: 0.18;
-    pointer-events: none;
-    z-index: 1;
+    z-index: 1; 
+    opacity: 0.12; /* Keep it very dim */
+    pointer-events: none; /* Prevents blocking clicks on dates */
+    background-image: 
+        radial-gradient(circle at 50% 50%, var(--maroon) 2px, transparent 3px),
+        radial-gradient(circle at 20% 80%, var(--gold) 1.5px, transparent 2px);
+    background-size: 100px 100px, 60px 60px;
+    animation: snow-fall 4s linear infinite;
 }
 
-.calendar-popup.season-spring::before {
-    background-image: radial-gradient(#ffb7c5 2px, transparent 2px), radial-gradient(#ff69b4 1.5px, transparent 1.5px);
-    background-size: 24px 24px;
-    background-position: 0 0, 12px 12px;
-    animation: springPetals 15s linear infinite;
-}
-
-@keyframes springPetals {
-    0% { background-position: 0 0, 12px 12px; }
-    100% { background-position: 0 48px, 12px 60px; }
-}
-
-.calendar-popup.season-summer::before {
-    background: radial-gradient(circle at center, rgba(255, 215, 0, 0.4) 0%, transparent 70%);
-    animation: summerGlow 4s ease-in-out infinite alternate;
-}
-
-@keyframes summerGlow {
-    0% { transform: scale(0.95); opacity: 0.12; }
-    100% { transform: scale(1.1); opacity: 0.25; }
-}
-
-.calendar-popup.season-monsoon::before {
-    background-image: linear-gradient(0deg, transparent 50%, rgba(70, 130, 180, 0.4) 50%);
-    background-size: 4px 16px;
-    animation: monsoonRain 0.8s linear infinite;
-}
-
-@keyframes monsoonRain {
-    0% { background-position: 0 0; }
-    100% { background-position: 0 16px; }
-}
-
-.calendar-popup.season-winter::before {
-    background-image: radial-gradient(#ffffff 1.5px, transparent 1.5px), radial-gradient(#e0ffff 1px, transparent 1px);
-    background-size: 20px 20px;
-    background-position: 0 0, 10px 10px;
-    animation: winterTwinkle 3s ease-in-out infinite alternate;
-}
-
-@keyframes winterTwinkle {
-    0% { opacity: 0.1; }
-    100% { opacity: 0.3; }
+@keyframes snow-fall {
+    0% { background-position: 0px 0px, 0px 0px; }
+    100% { background-position: 100px 100px, 60px 120px; }
 }
 
 /* =====================================
@@ -1099,6 +1065,84 @@ body {
     .carousel-btn {
         display: none;
     }
+}
+
+/* ---------- Sky strip inside the clock popup ---------- */
+.time-popup:not([hidden]) {
+    animation: tpRise 0.35s ease-out;
+}
+
+@keyframes tpRise {
+    from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+    to   { opacity: 1; transform: none; }
+}
+
+.tp-sky {
+    position: relative;
+    height: 90px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--light-gold);
+    background: linear-gradient(135deg, #faf5e9, #f2dfad);
+}
+
+.tp-sky-sun,
+.tp-sky-moon {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    left: 8%;
+    top: 88%;
+    transform: translate(-50%, -50%);
+}
+
+.tp-sky-sun {
+    background: radial-gradient(circle, #ffdf00, #ff8c00);
+    animation: tpSunGlow 3s ease-in-out infinite alternate;
+}
+
+.tp-sky-moon {
+    background: #fdfbf7;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
+}
+
+@keyframes tpSunGlow {
+    from { box-shadow: 0 0 10px #ff8c00; }
+    to   { box-shadow: 0 0 22px #ffb830; }
+}
+
+.tp-sky-stars {
+    position: absolute;
+    inset: 0;
+}
+
+.tp-sky-stars span {
+    position: absolute;
+    color: var(--light-gold);
+    font-size: 9px;
+    animation: tpTwinkle 2s ease-in-out infinite alternate;
+}
+
+.tp-sky-stars span:nth-child(1) { top: 12px; left: 18%; animation-delay: 0s; }
+.tp-sky-stars span:nth-child(2) { top: 28px; left: 62%; font-size: 7px; animation-delay: 0.6s; }
+.tp-sky-stars span:nth-child(3) { top: 10px; left: 80%; animation-delay: 1.2s; }
+.tp-sky-stars span:nth-child(4) { top: 40px; left: 36%; font-size: 7px; animation-delay: 1.8s; }
+
+@keyframes tpTwinkle {
+    from { opacity: 0.4; transform: scale(0.8); }
+    to   { opacity: 1;   transform: scale(1.2); }
+}
+
+.tp-sky-horizon {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 8px;
+    background: rgba(181, 138, 54, 0.3);
+    border-top: 1px solid var(--gold);
 }
 
 @media (prefers-reduced-motion: reduce) {
