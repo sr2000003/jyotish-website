@@ -135,7 +135,7 @@
 
                     <div class="form-row">
 
-                        <div class="form-group">
+                        <div class="form-group calendar-wrapper" style="position: relative;">
                             <label for="dateOfBirth">Date of Birth *</label>
                             <input
                                 type="date"
@@ -143,6 +143,18 @@
                                 name="dateOfBirth"
                                 required
                             >
+                            <div id="calendarPopup" class="calendar-popup" hidden>
+                                <div class="calendar-header">
+                                    <button type="button" id="prevMonth" aria-label="Previous Month">‹</button>
+                                    <h3 id="calendarMonthYear">Month Year</h3>
+                                    <button type="button" id="nextMonth" aria-label="Next Month">›</button>
+                                    <button type="button" id="closeCalendar" class="close-calendar" aria-label="Close Calendar">×</button>
+                                </div>
+                                <div class="calendar-weekdays">
+                                    <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+                                </div>
+                                <div id="calendarDays" class="calendar-days"></div>
+                            </div>
                         </div>
 
                         <div class="form-group">

@@ -60,6 +60,147 @@ form.addEventListener("submit", async function (event) {
   }
 });
 
+// Interactive Seasonal Calendar Logic
+document.addEventListener("DOMContentLoaded", function () {
+  const dobInput = document.getElementById("dateOfBirth");
+  const calendarPopup = document.getElementById("calendarPopup");
+  const prevMonthBtn = document.getElementById("prevMonth");
+  const nextMonthBtn = document.getElementById("nextMonth");
+  const closeCalendarBtn = document.getElementById("closeCalendar");
+  const monthYearEl = document.getElementById("calendarMonthYear");
+  const daysContainer = document.getElementById("calendarDays");
+
+  if (!dobInput || !calendarPopup) return;
+
+  let currentYear = new Date().getFullYear();
+  let currentMonth = new Date().getMonth(); // 0-11
+
+  if (dobInput.value) {
+    const parts = dobInput.value.split("-");
+    if (parts.length === 3) {
+      currentYear = parseInt(parts[0], 10);
+      currentMonth = parseInt(parts[1], 10) - 1;
+    }
+  }
+
+  function updateSeasonalClass(monthIndex) {
+    calendarPopup.classList.remove("season-spring", "season-summer", "season-monsoon", "season-winter");
+    // Spring: March (2), April (3), May (4)
+    // Summer: June (5), July (6), August (7)
+    // Monsoon: September (8), October (9), November (10)
+    // Winter: December (11), January (0), February (1)
+    if (monthIndex >= 2 && monthIndex <= 4) {
+      calendarPopup.classList.add("season-spring");
+    } else if (monthIndex >= 5 && monthIndex <= 7) {
+      calendarPopup.classList.add("season-summer");
+    } else if (monthIndex >= 8 && monthIndex <= 10) {
+      calendarPopup.classList.add("season-monsoon");
+    } else {
+      calendarPopup.classList.add("season-winter");
+    }
+  }
+
+  function renderCalendar(year, month) {
+    daysContainer.innerHTML = "";
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const totalDays = new Date(year, month + 1, 0).getDate();
+
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    monthYearEl.textContent = `${monthNames[month]} ${year}`;
+    updateSeasonalClass(month);
+
+    for (let i = 0; i < firstDayIndex; i++) {
+      const emptyCell = document.createElement("div");
+      emptyCell.classList.add("calendar-day", "empty");
+      daysContainer.appendChild(emptyCell);
+    }
+
+    const today = new Date();
+    const selectedVal = dobInput.value;
+
+    for (let day = 1; day <= totalDays; day++) {
+      const dayCell = document.createElement("div");
+      dayCell.classList.add("calendar-day");
+      dayCell.textContent = day;
+
+      const formattedMonth = String(month + 1).padStart(2, "0");
+      const formattedDay = String(day).padStart(2, "0");
+      const dateStr = `${year}-${formattedMonth}-${formattedDay}`;
+
+      if (
+        year === today.getFullYear() &&
+        month === today.getMonth() &&
+        day === today.getDate()
+      ) {
+        dayCell.classList.add("today");
+      }
+
+      if (selectedVal === dateStr) {
+        dayCell.classList.add("selected");
+      }
+
+      dayCell.addEventListener("click", function () {
+        dobInput.value = dateStr;
+        dobInput.dispatchEvent(new Event("change"));
+        calendarPopup.hidden = true;
+      });
+
+      daysContainer.appendChild(dayCell);
+    }
+  }
+
+  dobInput.addEventListener("focus", function () {
+    if (dobInput.value) {
+      const parts = dobInput.value.split("-");
+      if (parts.length === 3) {
+        currentYear = parseInt(parts[0], 10);
+        currentMonth = parseInt(parts[1], 10) - 1;
+      }
+    }
+    renderCalendar(currentYear, currentMonth);
+    calendarPopup.hidden = false;
+  });
+
+  dobInput.addEventListener("click", function () {
+    renderCalendar(currentYear, currentMonth);
+    calendarPopup.hidden = false;
+  });
+
+  closeCalendarBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    calendarPopup.hidden = true;
+  });
+
+  prevMonthBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    currentMonth--;
+    if (currentMonth < 0) {
+      currentMonth = 11;
+      currentYear--;
+    }
+    renderCalendar(currentYear, currentMonth);
+  });
+
+  nextMonthBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    currentMonth++;
+    if (currentMonth > 11) {
+      currentMonth = 0;
+      currentYear++;
+    }
+    renderCalendar(currentYear, currentMonth);
+  });
+
+  document.addEventListener("click", function (e) {
+    if (!calendarPopup.contains(e.target) && e.target !== dobInput) {
+      calendarPopup.hidden = true;
+    }
+  });
+});
+
 // Floating Skill Bubbles Physics & Animation
 document.addEventListener("DOMContentLoaded", function () {
   const bubbles = document.querySelectorAll(".skill-bubble");
