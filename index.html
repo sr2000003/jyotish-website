@@ -3,8 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Jyotish astrology consultation: book a personal Vedic birth chart reading, Vastu guidance, planetary remedies and gemstone advice.">
     <title>Jyotish Astrology Consultation - Advanced Portal</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* ── Night-sky theme layer (added on top of style.css) ── */
+        :root {
+            --sky-ink: #0a0f1e;
+            --sky-deep: #111a33;
+            --sky-gold: #d4b25c;
+            --sky-gold-soft: #ecd69a;
+            --sky-cream: #f3ecd6;
+            --sky-ring: rgba(212, 178, 92, 0.55);
+        }
+
+        /* Starfield: a fixed, faint layer of points behind everything */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image:
+                radial-gradient(1px 1px at 8% 12%, rgba(236, 214, 154, 0.55) 0%, transparent 100%),
+                radial-gradient(1px 1px at 24% 58%, rgba(243, 236, 214, 0.4) 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 41% 22%, rgba(212, 178, 92, 0.45) 0%, transparent 100%),
+                radial-gradient(1px 1px at 63% 74%, rgba(243, 236, 214, 0.35) 0%, transparent 100%),
+                radial-gradient(1px 1px at 82% 16%, rgba(236, 214, 154, 0.5) 0%, transparent 100%),
+                radial-gradient(1px 1px at 16% 88%, rgba(243, 236, 214, 0.3) 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 72% 44%, rgba(212, 178, 92, 0.4) 0%, transparent 100%),
+                radial-gradient(1px 1px at 92% 66%, rgba(243, 236, 214, 0.35) 0%, transparent 100%);
+            opacity: 0.9;
+        }
+
+        body {
+            background:
+                radial-gradient(ellipse at 50% -10%, var(--sky-deep) 0%, transparent 60%),
+                var(--sky-ink);
+            min-height: 100vh;
+        }
+
+        .page-shell,
+        .site-header,
+        main,
+        .site-footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Frosted header frame */
+        .site-header {
+            backdrop-filter: blur(6px);
+            padding-top: 2rem;
+        }
+
+        /* Gold gradient heading text */
+        .site-header h1,
+        .form-heading h2,
+        .intro-text h2 {
+            background: linear-gradient(135deg, var(--sky-gold) 0%, var(--sky-gold-soft) 50%, var(--sky-gold) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Fading gold divider between sections */
+        .gold-divider {
+            height: 1px;
+            margin: 2.5rem auto;
+            max-width: 520px;
+            background: linear-gradient(90deg, transparent, var(--sky-gold), transparent);
+            position: relative;
+        }
+        .gold-divider span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--sky-ink);
+            color: var(--sky-gold);
+            padding: 0 0.75rem;
+        }
+
+        /* Section cards: frosted panels with a thin gold edge */
+        .registration-form,
+        .skills-carousel-section {
+            background: linear-gradient(160deg, rgba(26, 20, 40, 0.82), rgba(33, 21, 53, 0.82));
+            border: 1px solid rgba(212, 178, 92, 0.18);
+            border-radius: 18px;
+            box-shadow: 0 0 40px rgba(212, 178, 92, 0.06);
+            backdrop-filter: blur(6px);
+        }
+
+        /* Clear focus rings for keyboard users */
+        .registration-form input:focus-visible,
+        .registration-form select:focus-visible,
+        .registration-form textarea:focus-visible,
+        .interactive-btn:focus-visible,
+        .carousel-btn:focus-visible,
+        .calendar-popup button:focus-visible,
+        a:focus-visible {
+            outline: 2px solid var(--sky-gold);
+            outline-offset: 3px;
+            border-radius: 6px;
+        }
+
+        /* Form inputs: gold glow when active */
+        .registration-form input:focus {
+            border-color: var(--sky-gold);
+            box-shadow: 0 0 0 3px rgba(212, 178, 92, 0.15);
+            outline: none;
+        }
+
+        /* Skill cards: a soft gold halo on hover and focus, without touching transforms */
+        .skill-card {
+            transition: box-shadow 0.35s ease, border-color 0.35s ease;
+        }
+        .skill-card:hover,
+        .skill-card:focus-within {
+            border-color: var(--sky-ring);
+            box-shadow: 0 10px 36px rgba(212, 178, 92, 0.14);
+        }
+
+        /* Submit button: stronger halo on hover */
+        .interactive-btn:hover {
+            box-shadow: 0 8px 30px rgba(212, 178, 92, 0.25);
+        }
+
+        /* Footer sign-off */
+        .site-footer {
+            opacity: 0.85;
+            text-align: center;
+            padding-bottom: 2rem;
+        }
+
+        /* Small screens: tighten spacing so cards don't crowd */
+        @media (max-width: 600px) {
+            .registration-form,
+            .skills-carousel-section {
+                border-radius: 14px;
+            }
+            .gold-divider {
+                margin: 1.75rem auto;
+            }
+        }
+
+        /* Respect reduced motion: keep layout, drop the movement */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+            body::before {
+                opacity: 0.6;
+            }
+        }
+    </style>
     <script src="script.js" defer></script>
 </head>
 <body>
@@ -212,19 +370,19 @@
                     <button type="button" class="carousel-btn prev-btn" aria-label="Previous Skill">‹</button>
                     <div class="carousel-3d-scene">
                         <div class="carousel-3d-ring" id="skillsCarouselRing">
-                            <div class="skill-card" data-index="0">
+                            <div class="skill-card" data-index="0" tabindex="0">
                                 <h3>जन्म कुंडली</h3>
                                 <p>Janam Kundli: Comprehensive birth chart analysis.</p>
                             </div>
-                            <div class="skill-card" data-index="1">
+                            <div class="skill-card" data-index="1" tabindex="0">
                                 <h3>वास्तु परामर्श</h3>
                                 <p>Vastu Paramarsh: Harmonize living and working spaces.</p>
                             </div>
-                            <div class="skill-card" data-index="2">
+                            <div class="skill-card" data-index="2" tabindex="0">
                                 <h3>ग्रह दोष निवारण</h3>
                                 <p>Grah Dosh Nivaran: Remedies for planetary afflictions.</p>
                             </div>
-                            <div class="skill-card" data-index="3">
+                            <div class="skill-card" data-index="3" tabindex="0">
                                 <h3>रत्न सलाह</h3>
                                 <p>Ratan Salah: Astrological gemstone recommendations.</p>
                             </div>
