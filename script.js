@@ -60,6 +60,53 @@ form.addEventListener("submit", async function (event) {
   }
 });
 
+// Time of Birth Clock & Sky Transition Logic
+document.addEventListener("DOMContentLoaded", function () {
+  const timeInput = document.getElementById("timeOfBirth");
+  const timeSkyWidget = document.getElementById("timeSkyWidget");
+  const hourHand = document.getElementById("hourHand");
+  const minuteHand = document.getElementById("minuteHand");
+
+  if (!timeInput || !timeSkyWidget || !hourHand || !minuteHand) return;
+
+  function updateTimeWidget() {
+    const val = timeInput.value;
+    if (!val) {
+      timeSkyWidget.className = "time-sky-widget sky-neutral";
+      hourHand.style.transform = "translateX(-50%) rotate(0deg)";
+      minuteHand.style.transform = "translateX(-50%) rotate(0deg)";
+      return;
+    }
+
+    const [hoursStr, minutesStr] = val.split(":");
+    const hours = parseInt(hoursStr, 10);
+    const minutes = parseInt(minutesStr, 10);
+
+    const minuteDegrees = minutes * 6; // 360 / 60
+    const hourDegrees = (hours % 12) * 30 + (minutes / 60) * 30; // 360 / 12
+
+    hourHand.style.transform = `translateX(-50%) rotate(${hourDegrees}deg)`;
+    minuteHand.style.transform = `translateX(-50%) rotate(${minuteDegrees}deg)`;
+
+    timeSkyWidget.classList.remove("sky-neutral", "sky-day", "sky-sunset", "sky-night");
+
+    if (hours >= 6 && hours < 17) {
+      timeSkyWidget.classList.add("sky-day");
+    } else if (hours >= 17 && hours < 19) {
+      timeSkyWidget.classList.add("sky-sunset");
+    } else {
+      timeSkyWidget.classList.add("sky-night");
+    }
+  }
+
+  timeInput.addEventListener("input", updateTimeWidget);
+  timeInput.addEventListener("change", updateTimeWidget);
+
+  if (timeInput.value) {
+    updateTimeWidget();
+  }
+});
+
 // Interactive Seasonal Calendar Logic
 document.addEventListener("DOMContentLoaded", function () {
   const dobInput = document.getElementById("dateOfBirth");

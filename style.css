@@ -763,4 +763,206 @@ button[type="submit"] span {
     }
 }
 
+/* Time of Birth Sky Transition & Clock Widget */
+
+.time-sky-widget {
+    margin-top: 10px;
+    height: 110px;
+    border-radius: 6px;
+    border: 1px solid var(--light-gold);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    position: relative;
+    overflow: hidden;
+    background: #faf5e9;
+    transition: background 1s ease;
+}
+
+/* Sky Panel */
+.sky-panel {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.sky-horizon {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 12px;
+    background: rgba(181, 138, 54, 0.25);
+    border-top: 1px solid var(--gold);
+}
+
+/* Sun */
+.sky-sun {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    background: radial-gradient(circle, #ffdf00, #ff8c00);
+    border-radius: 50%;
+    box-shadow: 0 0 12px #ff8c00;
+    top: 20px;
+    left: 35px;
+    transition: transform 1s ease, opacity 1s ease;
+}
+
+/* Moon */
+.sky-moon {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    background: #fdfbf7;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    top: 20px;
+    right: 35px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: transform 1s ease, opacity 1s ease;
+}
+
+/* Stars */
+.sky-stars {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+.sky-stars .star {
+    position: absolute;
+    color: var(--light-gold);
+    font-size: 11px;
+}
+
+.sky-stars .star:nth-child(1) { top: 15px; left: 45px; }
+.sky-stars .star:nth-child(2) { top: 28px; left: 100px; font-size: 8px; }
+.sky-stars .star:nth-child(3) { top: 18px; left: 155px; }
+
+/* Sky States */
+.time-sky-widget.sky-neutral {
+    background: linear-gradient(135deg, #faf5e9, #f2dfad);
+}
+.time-sky-widget.sky-neutral .sky-sun,
+.time-sky-widget.sky-neutral .sky-moon,
+.time-sky-widget.sky-neutral .sky-stars {
+    opacity: 0;
+}
+
+.time-sky-widget.sky-day {
+    background: linear-gradient(135deg, #87ceeb, #fef08a);
+}
+.time-sky-widget.sky-day .sky-sun {
+    opacity: 1;
+    transform: translateY(0);
+}
+.time-sky-widget.sky-day .sky-moon {
+    opacity: 0;
+    transform: translateY(20px);
+}
+.time-sky-widget.sky-day .sky-stars {
+    opacity: 0;
+}
+
+.time-sky-widget.sky-sunset {
+    background: linear-gradient(135deg, #f97316, #7e22ce);
+}
+.time-sky-widget.sky-sunset .sky-sun {
+    opacity: 0.8;
+    transform: translateY(32px) scale(0.85);
+}
+.time-sky-widget.sky-sunset .sky-moon {
+    opacity: 0.4;
+    transform: translateY(8px);
+}
+.time-sky-widget.sky-sunset .sky-stars {
+    opacity: 0.6;
+}
+
+.time-sky-widget.sky-night {
+    background: linear-gradient(135deg, #0f172a, #1e1b4b);
+}
+.time-sky-widget.sky-night .sky-sun {
+    opacity: 0;
+    transform: translateY(45px) scale(0.5);
+}
+.time-sky-widget.sky-night .sky-moon {
+    opacity: 1;
+    transform: translateY(0);
+}
+.time-sky-widget.sky-night .sky-stars {
+    opacity: 1;
+}
+
+/* Clock Face */
+.clock-face {
+    position: relative;
+    z-index: 2;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    border: 2px solid var(--gold);
+    box-shadow: 0 4px 12px rgba(79, 19, 38, 0.15);
+    margin-left: auto;
+}
+
+.clock-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    background: var(--maroon);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+}
+
+.clock-hand {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform-origin: bottom center;
+    border-radius: 3px;
+    z-index: 3;
+    transition: transform 0.5s cubic-bezier(0.4, 2.08, 0.55, 0.44);
+}
+
+.hour-hand {
+    width: 3px;
+    height: 20px;
+    background: var(--maroon);
+    transform: translateX(-50%) rotate(0deg);
+}
+
+.minute-hand {
+    width: 2px;
+    height: 28px;
+    background: var(--gold);
+    transform: translateX(-50%) rotate(0deg);
+}
+
+.clock-num {
+    position: absolute;
+    font-size: 9px;
+    font-weight: bold;
+    color: var(--dark-maroon);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .time-sky-widget,
+    .sky-sun,
+    .sky-moon,
+    .sky-stars,
+    .clock-hand {
+        transition: none !important;
+    }
+}
+
+
 
