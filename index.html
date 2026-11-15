@@ -1,17 +1,15 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Jyotish Astrology Consultation</title>
-
+    <title>Jyotish Astrology Consultation - Advanced Portal</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
-
 <body>
+    <!-- Interactive Background Glow & Floating Skill Bubbles -->
+    <div class="cursor-glow" aria-hidden="true"></div>
 
     <div class="floating-bubbles-container" aria-hidden="true">
         <div class="skill-bubble" data-text="Janam Kundli">जन्म कुंडली<br><span>Janam Kundli</span></div>
@@ -20,36 +18,27 @@
         <div class="skill-bubble" data-text="Ratan Salah">रत्न सलाह<br><span>Ratan Salah</span></div>
     </div>
 
+    <canvas id="planetBg" aria-hidden="true"></canvas>
+
     <div class="page-shell">
-
         <header class="site-header">
-
-            <div class="om-emblem">ॐ</div>
-
+            <div class="om-emblem pulse-glow">ॐ</div>
             <p class="eyebrow">VEDIC ASTROLOGY & GUIDANCE</p>
-
             <h1>ज्योतिष परामर्श केंद्र</h1>
-
             <h2>Jyotish Astrology Consultation</h2>
-
             <p class="header-description">
-                Discover the wisdom of the stars.
+                Discover the wisdom of the stars with immersive cosmic guidance.
                 Register for your personal astrology consultation.
             </p>
-
             <div class="gold-divider">
                 <span>✦</span>
             </div>
-
         </header>
 
         <main>
-
             <section class="intro-section">
-
                 <div class="astrology-art" aria-hidden="true">
-
-                    <div class="sun-mark">
+                    <div class="sun-mark spin-slow">
                         <div class="zodiac-ring">
                             <span class="zodiac-symbol">♈</span>
                             <span class="zodiac-symbol">♉</span>
@@ -66,8 +55,7 @@
                         </div>
                         <div class="sun-center">ॐ</div>
                     </div>
-
-                    <div class="kundli-card">
+                    <div class="kundli-card float-slow">
                         <div class="kundli-diagram">
                             <div class="kundli-line line-one"></div>
                             <div class="kundli-line line-two"></div>
@@ -78,29 +66,23 @@
                         <p>जन्म कुंडली</p>
                         <span>JANMA KUNDLI</span>
                     </div>
-
                 </div>
 
                 <div class="intro-text">
                     <p class="eyebrow">YOUR JOURNEY BEGINS HERE</p>
-
                     <h2>Personal Astrology Consultation</h2>
-
                     <p>
                         Your birth details help prepare the foundation
                         for your astrological consultation.
                     </p>
-
                     <p class="intro-note">
                         Please provide accurate birth information
                         before submitting your registration.
                     </p>
                 </div>
-
             </section>
 
             <section class="registration-form">
-
                 <div class="form-heading">
                     <span class="heading-symbol">✦</span>
                     <h2>Client Registration</h2>
@@ -108,17 +90,19 @@
                 </div>
 
                 <form id="registrationForm">
-
                     <div class="form-group">
                         <label for="fullName">Full Name *</label>
-                        <input
-                            type="text"
-                            id="fullName"
-                            name="fullName"
-                            placeholder="Enter your full name"
-                            autocomplete="name"
-                            required
-                        >
+                        <div class="input-with-preview">
+                            <input
+                                type="text"
+                                id="fullName"
+                                name="fullName"
+                                placeholder="Enter your full name"
+                                autocomplete="name"
+                                required
+                            >
+                            <div id="fallingLettersPreview" class="falling-letters-preview" aria-hidden="true"></div>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -134,7 +118,6 @@
                     </div>
 
                     <div class="form-row">
-
                         <div class="form-group calendar-wrapper" style="position: relative;">
                             <label for="dateOfBirth">Date of Birth *</label>
                             <input
@@ -153,7 +136,7 @@
                                 <div class="calendar-weekdays">
                                     <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
                                 </div>
-                                <div id="calendarDays" class="calendar-days"></div>
+                                <div id="calendarDays" class="calendar-days perspective-container"></div>
                             </div>
                         </div>
 
@@ -165,7 +148,7 @@
                                 name="timeOfBirth"
                                 required
                             >
-                            <div id="timeSkyWidget" class="time-sky-widget sky-neutral" aria-hidden="true">
+                            <div id="timeSkyWidget" class="time-sky-widget sky-neutral ambient-clock-container" aria-hidden="true">
                                 <div class="sky-panel">
                                     <div class="sky-sun"></div>
                                     <div class="sky-moon"></div>
@@ -176,7 +159,7 @@
                                     </div>
                                     <div class="sky-horizon"></div>
                                 </div>
-                                <div class="clock-face">
+                                <div class="clock-face ambient-clock">
                                     <div class="clock-center"></div>
                                     <div id="hourHand" class="clock-hand hour-hand"></div>
                                     <div id="minuteHand" class="clock-hand minute-hand"></div>
@@ -185,9 +168,9 @@
                                     <span class="clock-num" style="bottom: 3px; left: 50%; transform: translateX(-50%);">6</span>
                                     <span class="clock-num" style="left: 5px; top: 50%; transform: translateY(-50%);">9</span>
                                 </div>
+                                <div class="clock-ambient-aura"></div>
                             </div>
                         </div>
-
                     </div>
 
                     <div class="form-group">
@@ -206,7 +189,7 @@
                         * All fields are required.
                     </p>
 
-                    <button type="submit">
+                    <button type="submit" class="interactive-btn">
                         Submit Registration
                         <span>→</span>
                     </button>
@@ -216,11 +199,40 @@
                         role="status"
                         aria-live="polite"
                     ></p>
-
                 </form>
-
             </section>
 
+            <section class="skills-carousel-section">
+                <div class="form-heading">
+                    <span class="heading-symbol">✦</span>
+                    <h2>Explore Our Astrology Services</h2>
+                    <p>विशेष ज्योतिषीय सेवाएँ</p>
+                </div>
+                <div class="carousel-container">
+                    <button type="button" class="carousel-btn prev-btn" aria-label="Previous Skill">‹</button>
+                    <div class="carousel-3d-scene">
+                        <div class="carousel-3d-ring" id="skillsCarouselRing">
+                            <div class="skill-card" data-index="0">
+                                <h3>जन्म कुंडली</h3>
+                                <p>Janam Kundli: Comprehensive birth chart analysis.</p>
+                            </div>
+                            <div class="skill-card" data-index="1">
+                                <h3>वास्तु परामर्श</h3>
+                                <p>Vastu Paramarsh: Harmonize living and working spaces.</p>
+                            </div>
+                            <div class="skill-card" data-index="2">
+                                <h3>ग्रह दोष निवारण</h3>
+                                <p>Grah Dosh Nivaran: Remedies for planetary afflictions.</p>
+                            </div>
+                            <div class="skill-card" data-index="3">
+                                <h3>रत्न सलाह</h3>
+                                <p>Ratan Salah: Astrological gemstone recommendations.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="carousel-btn next-btn" aria-label="Next Skill">›</button>
+                </div>
+            </section>
         </main>
 
         <footer class="site-footer">
@@ -228,8 +240,6 @@
             <p>ॐ शुभम भवतु ॐ</p>
             <p>© Jyotish Astrology Consultation</p>
         </footer>
-
     </div>
-
 </body>
 </html>

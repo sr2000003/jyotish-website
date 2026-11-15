@@ -1,7 +1,6 @@
-
 /* =====================================
-   JYOTISH ASTROLOGY WEBSITE
-   Traditional maroon, gold and ivory
+   JYOTISH ASTROLOGY WEBSITE - 60FPS UI/UX MOTION
+   Traditional maroon, gold and ivory with immersive animations
 ===================================== */
 
 * {
@@ -21,7 +20,6 @@
 }
 
 /* Main page */
-
 body {
     font-family: Georgia, "Noto Serif", serif;
     background:
@@ -31,10 +29,34 @@ body {
     color: var(--text);
     padding: 25px 15px;
     min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+#planetBg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    pointer-events: none;
+}
+
+/* Cursor-reactive background glow */
+.cursor-glow {
+    position: fixed;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(181, 138, 54, 0.15) 0%, rgba(121, 29, 53, 0.05) 50%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+    z-index: 0;
+    will-change: transform;
 }
 
 /* Main decorative border */
-
 .page-shell {
     max-width: 1050px;
     margin: auto;
@@ -44,7 +66,9 @@ body {
     outline: 1px solid var(--maroon);
     outline-offset: -9px;
     position: relative;
-    box-shadow: 0 12px 40px rgba(70, 35, 20, 0.12);
+    box-shadow: 0 16px 50px rgba(70, 35, 20, 0.15);
+    z-index: 1;
+    backdrop-filter: blur(5px);
 }
 
 .page-shell::before,
@@ -65,8 +89,7 @@ body {
     right: 15px;
 }
 
-/* Header */
-
+/* Header & Animations */
 .site-header {
     text-align: center;
     padding: 28px 15px 25px;
@@ -84,7 +107,21 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 42px;
-    box-shadow: 0 0 0 5px #f8edd1;
+    box-shadow: 0 0 0 5px #f8edd1, 0 8px 25px rgba(181, 138, 54, 0.3);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.om-emblem:hover {
+    transform: scale(1.08) rotate(5deg);
+}
+
+.pulse-glow {
+    animation: pulseGlow 4s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 0 5px #f8edd1, 0 8px 25px rgba(181, 138, 54, 0.3); }
+    50% { box-shadow: 0 0 0 10px rgba(223, 193, 122, 0.3), 0 12px 35px rgba(121, 29, 53, 0.4); }
 }
 
 .eyebrow {
@@ -99,6 +136,26 @@ body {
     color: var(--maroon);
     font-size: clamp(25px, 5vw, 39px);
     margin-bottom: 8px;
+    text-shadow: 0 0 6px rgba(255, 215, 0, 0.5), 0 0 12px rgba(212, 175, 55, 0.3);
+    animation: headingGlow 3s ease-in-out infinite;
+}
+
+@keyframes headingGlow {
+    0%, 100% {
+        text-shadow: 0 0 4px rgba(255, 215, 0, 0.4), 0 0 10px rgba(212, 175, 55, 0.25);
+        color: var(--maroon);
+    }
+    50% {
+        text-shadow: 0 0 8px rgba(255, 223, 0, 0.7), 0 0 16px rgba(238, 204, 85, 0.45);
+        color: #6a182e;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .site-header h1 {
+        animation: none !important;
+        text-shadow: 0 0 6px rgba(255, 215, 0, 0.5), 0 0 12px rgba(212, 175, 55, 0.3);
+    }
 }
 
 .site-header h2 {
@@ -115,7 +172,6 @@ body {
 }
 
 /* Decorative divider */
-
 .gold-divider {
     display: flex;
     align-items: center;
@@ -138,7 +194,6 @@ body {
 }
 
 /* Intro section */
-
 .intro-section {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -166,7 +221,6 @@ body {
 }
 
 /* Astrology artwork */
-
 .astrology-art {
     text-align: center;
     padding: 15px;
@@ -188,6 +242,15 @@ body {
     justify-content: center;
 }
 
+.spin-slow {
+    animation: spinSlow 30s linear infinite;
+}
+
+@keyframes spinSlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 .zodiac-ring {
     position: absolute;
     inset: 17px;
@@ -203,65 +266,18 @@ body {
     transform: translate(-50%, -50%);
 }
 
-.zodiac-symbol:nth-child(1) {
-    top: 5%;
-    left: 50%;
-}
-
-.zodiac-symbol:nth-child(2) {
-    top: 13%;
-    left: 76%;
-}
-
-.zodiac-symbol:nth-child(3) {
-    top: 29%;
-    left: 91%;
-}
-
-.zodiac-symbol:nth-child(4) {
-    top: 50%;
-    left: 95%;
-}
-
-.zodiac-symbol:nth-child(5) {
-    top: 72%;
-    left: 87%;
-}
-
-.zodiac-symbol:nth-child(6) {
-    top: 88%;
-    left: 69%;
-}
-
-.zodiac-symbol:nth-child(7) {
-    top: 95%;
-    left: 50%;
-}
-
-.zodiac-symbol:nth-child(8) {
-    top: 86%;
-    left: 25%;
-}
-
-.zodiac-symbol:nth-child(9) {
-    top: 69%;
-    left: 9%;
-}
-
-.zodiac-symbol:nth-child(10) {
-    top: 49%;
-    left: 5%;
-}
-
-.zodiac-symbol:nth-child(11) {
-    top: 27%;
-    left: 12%;
-}
-
-.zodiac-symbol:nth-child(12) {
-    top: 12%;
-    left: 28%;
-}
+.zodiac-symbol:nth-child(1) { top: 5%; left: 50%; }
+.zodiac-symbol:nth-child(2) { top: 13%; left: 76%; }
+.zodiac-symbol:nth-child(3) { top: 29%; left: 91%; }
+.zodiac-symbol:nth-child(4) { top: 50%; left: 95%; }
+.zodiac-symbol:nth-child(5) { top: 72%; left: 87%; }
+.zodiac-symbol:nth-child(6) { top: 88%; left: 69%; }
+.zodiac-symbol:nth-child(7) { top: 95%; left: 50%; }
+.zodiac-symbol:nth-child(8) { top: 86%; left: 25%; }
+.zodiac-symbol:nth-child(9) { top: 69%; left: 9%; }
+.zodiac-symbol:nth-child(10) { top: 49%; left: 5%; }
+.zodiac-symbol:nth-child(11) { top: 27%; left: 12%; }
+.zodiac-symbol:nth-child(12) { top: 12%; left: 28%; }
 
 .sun-center {
     position: relative;
@@ -279,11 +295,19 @@ body {
 }
 
 /* Kundli chart */
-
 .kundli-card {
     margin: 25px auto 0;
     max-width: 185px;
     color: var(--maroon);
+}
+
+.float-slow {
+    animation: floatSlow 6s ease-in-out infinite;
+}
+
+@keyframes floatSlow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
 }
 
 .kundli-diagram {
@@ -302,32 +326,10 @@ body {
     opacity: 0.7;
 }
 
-.line-one {
-    height: 1px;
-    width: 100%;
-    top: 50%;
-}
-
-.line-two {
-    height: 1px;
-    width: 100%;
-    top: 50%;
-    transform: rotate(90deg);
-}
-
-.line-three {
-    height: 1px;
-    width: 100%;
-    top: 50%;
-    transform: rotate(45deg);
-}
-
-.line-four {
-    height: 1px;
-    width: 100%;
-    top: 50%;
-    transform: rotate(-45deg);
-}
+.line-one { height: 1px; width: 100%; top: 50%; }
+.line-two { height: 1px; width: 100%; top: 50%; transform: rotate(90deg); }
+.line-three { height: 1px; width: 100%; top: 50%; transform: rotate(45deg); }
+.line-four { height: 1px; width: 100%; top: 50%; transform: rotate(-45deg); }
 
 .kundli-center {
     position: absolute;
@@ -352,14 +354,14 @@ body {
 }
 
 /* Registration form */
-
 .registration-form {
     max-width: 620px;
     margin: 0 auto 25px;
     padding: 30px;
     background: #fffaf0;
     border: 1px solid var(--light-gold);
-    border-radius: 5px;
+    border-radius: 8px;
+    box-shadow: 0 8px 30px rgba(121, 29, 53, 0.08);
 }
 
 .form-heading {
@@ -384,9 +386,9 @@ body {
 }
 
 /* Form fields */
-
 .form-group {
     margin-bottom: 20px;
+    position: relative;
 }
 
 .form-group label {
@@ -403,16 +405,17 @@ body {
     font-family: inherit;
     font-size: 14px;
     border: 1px solid #d8c49c;
-    border-radius: 4px;
+    border-radius: 6px;
     background: #fffefa;
     color: var(--text);
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .form-group input:focus {
     outline: none;
     border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(181, 138, 54, 0.13);
+    box-shadow: 0 0 0 4px rgba(181, 138, 54, 0.18), 0 4px 12px rgba(121, 29, 53, 0.1);
+    transform: translateY(-1px);
 }
 
 .form-row {
@@ -427,176 +430,80 @@ body {
     margin-bottom: 15px;
 }
 
-/* Submit button */
-
-button[type="submit"] {
-    width: 100%;
-    padding: 15px;
-    border: 1px solid var(--gold);
-    border-radius: 4px;
-    background: var(--maroon);
-    color: white;
-    font-family: inherit;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.2s;
+/* =====================================
+   REQUIREMENT 4: NAME INPUT FALLING LETTERS
+===================================== */
+.input-with-preview {
+    position: relative;
 }
 
-button[type="submit"]:hover {
-    background: var(--dark-maroon);
-    transform: translateY(-2px);
-}
-
-button[type="submit"] span {
-    margin-left: 8px;
-    color: var(--light-gold);
-}
-
-#formMessage {
-    margin-top: 15px;
-    text-align: center;
-    font-size: 14px;
-    line-height: 1.6;
-}
-
-/* Footer */
-
-.site-footer {
-    text-align: center;
-    padding: 10px 10px 20px;
-    color: var(--maroon);
-}
-
-.site-footer p:first-of-type {
-    font-size: 19px;
-    margin-bottom: 8px;
-}
-
-.site-footer p:last-of-type {
-    color: #947344;
-    font-size: 12px;
-}
-
-/* Mobile responsive design */
-
-@media (max-width: 700px) {
-
-    body {
-        padding: 12px 8px;
-    }
-
-    .page-shell {
-        padding: 20px 16px;
-    }
-
-    .site-header {
-        padding: 25px 8px;
-    }
-
-    .intro-section {
-        grid-template-columns: 1fr;
-        gap: 25px;
-        text-align: center;
-    }
-
-    .intro-text h2 {
-        font-size: 23px;
-    }
-
-    .registration-form {
-        padding: 22px 16px;
-    }
-
-    .form-row {
-        grid-template-columns: 1fr;
-        gap: 0;
-    }
-
-    .sun-mark {
-        width: 165px;
-        height: 165px;
-    }
-
-    .kundli-diagram {
-        width: 115px;
-        height: 115px;
-    }
-
-    .page-shell::before,
-    .page-shell::after {
-        font-size: 25px;
-    }
-}
-
-/* Floating Skill Bubbles */
-
-.floating-bubbles-container {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: -1;
-    overflow: hidden;
-}
-
-.skill-bubble {
+.falling-letters-preview {
     position: absolute;
-    width: 125px;
-    height: 125px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(255, 252, 240, 0.95), rgba(223, 193, 122, 0.85));
-    border: 2px solid var(--gold);
-    color: var(--maroon);
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-size: 13px;
+    gap: 2px;
+    pointer-events: none;
+    z-index: 5;
+    font-size: 14px;
     font-weight: bold;
-    box-shadow: 0 4px 20px rgba(121, 29, 53, 0.12), inset 0 0 15px rgba(181, 138, 54, 0.2);
-    user-select: none;
-    will-change: transform;
-    padding: 10px;
+    color: var(--maroon);
 }
 
-.skill-bubble span {
-    font-size: 9px;
-    letter-spacing: 1px;
-    color: var(--dark-maroon);
-    margin-top: 4px;
-    font-weight: normal;
+.falling-letter {
+    display: inline-block;
+    animation: fallInPhysics 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    opacity: 0;
+    transform: translateY(-30px) rotate(-15deg);
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .floating-bubbles-container {
-        display: none;
+@keyframes fallInPhysics {
+    0% {
+        opacity: 0;
+        transform: translateY(-35px) rotate(-20deg) scale(0.8);
+    }
+    70% {
+        opacity: 1;
+        transform: translateY(4deg) rotate(3deg) scale(1.05);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg) scale(1);
     }
 }
 
-/* Interactive Calendar Popup & Seasonal Backgrounds */
-
+/* =====================================
+   REQUIREMENT 3: CALENDAR WITH 3D FLIP & MICRO-INTERACTIONS
+===================================== */
 .calendar-wrapper {
     position: relative;
 }
 
+.perspective-container {
+    perspective: 1000px;
+}
+
 .calendar-popup {
     position: absolute;
-    top: calc(100% + 5px);
+    top: calc(100% + 8px);
     left: 0;
-    width: 320px;
+    width: 330px;
     background: var(--white);
     border: 2px solid var(--gold);
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(79, 19, 38, 0.2);
+    border-radius: 10px;
+    box-shadow: 0 15px 40px rgba(79, 19, 38, 0.25);
     padding: 18px;
     z-index: 100;
     overflow: hidden;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transform-origin: top left;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .calendar-popup[hidden] {
     display: none;
+    opacity: 0;
+    transform: scale(0.9) translateY(-10px);
 }
 
 .calendar-header {
@@ -612,6 +519,23 @@ button[type="submit"] span {
     font-size: 16px;
     color: var(--maroon);
     font-weight: bold;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* 3D Month Flip Transition */
+.calendar-days.flip-3d {
+    animation: monthFlip3D 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes monthFlip3D {
+    0% {
+        opacity: 0;
+        transform: rotateX(25deg) translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: rotateX(0deg) translateY(0);
+    }
 }
 
 .calendar-header button {
@@ -626,13 +550,18 @@ button[type="submit"] span {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s, color 0.2s;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .calendar-header button:hover {
     background: var(--maroon);
     color: var(--white);
     border-color: var(--maroon);
+    transform: scale(1.1);
+}
+
+.calendar-header button:active {
+    transform: scale(0.92);
 }
 
 .close-calendar {
@@ -667,15 +596,22 @@ button[type="submit"] span {
     font-size: 13px;
     border-radius: 50%;
     cursor: pointer;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.85);
     color: var(--text);
-    transition: background 0.2s, color 0.2s, transform 0.1s;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
 }
 
 .calendar-day:hover {
     background: var(--light-gold);
     color: var(--dark-maroon);
-    transform: scale(1.08);
+    transform: scale(1.15) translateY(-2px);
+    box-shadow: 0 6px 15px rgba(181, 138, 54, 0.3);
+    z-index: 3;
+}
+
+.calendar-day:active {
+    transform: scale(0.95);
 }
 
 .calendar-day.empty {
@@ -684,7 +620,7 @@ button[type="submit"] span {
 }
 
 .calendar-day.today {
-    border: 1px solid var(--gold);
+    border: 2px solid var(--gold);
     font-weight: bold;
 }
 
@@ -692,10 +628,10 @@ button[type="submit"] span {
     background: var(--maroon);
     color: var(--white);
     font-weight: bold;
+    box-shadow: 0 4px 15px rgba(121, 29, 53, 0.4);
 }
 
 /* Seasonal Animated Backgrounds */
-
 .calendar-popup::before {
     content: "";
     position: absolute;
@@ -705,7 +641,6 @@ button[type="submit"] span {
     z-index: 1;
 }
 
-/* Spring: Blossom Petals (Months 3, 4, 5 - March, April, May) */
 .calendar-popup.season-spring::before {
     background-image: radial-gradient(#ffb7c5 2px, transparent 2px), radial-gradient(#ff69b4 1.5px, transparent 1.5px);
     background-size: 24px 24px;
@@ -718,7 +653,6 @@ button[type="submit"] span {
     100% { background-position: 0 48px, 12px 60px; }
 }
 
-/* Summer: Golden Sun Rays (Months 6, 7, 8 - June, July, August) */
 .calendar-popup.season-summer::before {
     background: radial-gradient(circle at center, rgba(255, 215, 0, 0.4) 0%, transparent 70%);
     animation: summerGlow 4s ease-in-out infinite alternate;
@@ -729,7 +663,6 @@ button[type="submit"] span {
     100% { transform: scale(1.1); opacity: 0.25; }
 }
 
-/* Monsoon: Falling Raindrops (Months 9, 10, 11 - Sept, Oct, Nov) */
 .calendar-popup.season-monsoon::before {
     background-image: linear-gradient(0deg, transparent 50%, rgba(70, 130, 180, 0.4) 50%);
     background-size: 4px 16px;
@@ -741,7 +674,6 @@ button[type="submit"] span {
     100% { background-position: 0 16px; }
 }
 
-/* Winter: Twinkling Frost Stars (Months 12, 1, 2 - Dec, Jan, Feb) */
 .calendar-popup.season-winter::before {
     background-image: radial-gradient(#ffffff 1.5px, transparent 1.5px), radial-gradient(#e0ffff 1px, transparent 1px);
     background-size: 20px 20px;
@@ -754,21 +686,13 @@ button[type="submit"] span {
     100% { opacity: 0.3; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .calendar-popup.season-spring::before,
-    .calendar-popup.season-summer::before,
-    .calendar-popup.season-monsoon::before,
-    .calendar-popup.season-winter::before {
-        animation: none !important;
-    }
-}
-
-/* Time of Birth Sky Transition & Clock Widget */
-
+/* =====================================
+   REQUIREMENT 2: AMBIENT CLOCK & MOUSE PURSUING GLOW
+===================================== */
 .time-sky-widget {
     margin-top: 10px;
-    height: 110px;
-    border-radius: 6px;
+    height: 115px;
+    border-radius: 8px;
     border: 1px solid var(--light-gold);
     display: flex;
     align-items: center;
@@ -777,10 +701,13 @@ button[type="submit"] span {
     position: relative;
     overflow: hidden;
     background: #faf5e9;
-    transition: background 1s ease;
+    transition: background 1s ease, box-shadow 0.3s ease;
 }
 
-/* Sky Panel */
+.time-sky-widget:hover {
+    box-shadow: 0 8px 25px rgba(181, 138, 54, 0.25);
+}
+
 .sky-panel {
     position: absolute;
     inset: 0;
@@ -797,35 +724,32 @@ button[type="submit"] span {
     border-top: 1px solid var(--gold);
 }
 
-/* Sun */
 .sky-sun {
     position: absolute;
     width: 34px;
     height: 34px;
     background: radial-gradient(circle, #ffdf00, #ff8c00);
     border-radius: 50%;
-    box-shadow: 0 0 12px #ff8c00;
+    box-shadow: 0 0 15px #ff8c00;
     top: 20px;
     left: 35px;
-    transition: transform 1s ease, opacity 1s ease;
+    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease;
 }
 
-/* Moon */
 .sky-moon {
     position: absolute;
     width: 28px;
     height: 28px;
     background: #fdfbf7;
     border-radius: 50%;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
     top: 20px;
     right: 35px;
     opacity: 0;
     transform: translateY(20px);
-    transition: transform 1s ease, opacity 1s ease;
+    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease;
 }
 
-/* Stars */
 .sky-stars {
     position: absolute;
     inset: 0;
@@ -837,78 +761,65 @@ button[type="submit"] span {
     position: absolute;
     color: var(--light-gold);
     font-size: 11px;
+    animation: starTwinkle 2s ease-in-out infinite alternate;
 }
 
-.sky-stars .star:nth-child(1) { top: 15px; left: 45px; }
-.sky-stars .star:nth-child(2) { top: 28px; left: 100px; font-size: 8px; }
-.sky-stars .star:nth-child(3) { top: 18px; left: 155px; }
+@keyframes starTwinkle {
+    0% { transform: scale(0.8); opacity: 0.5; }
+    100% { transform: scale(1.2); opacity: 1; }
+}
+
+.sky-stars .star:nth-child(1) { top: 15px; left: 45px; animation-delay: 0s; }
+.sky-stars .star:nth-child(2) { top: 28px; left: 100px; font-size: 8px; animation-delay: 0.7s; }
+.sky-stars .star:nth-child(3) { top: 18px; left: 155px; animation-delay: 1.4s; }
 
 /* Sky States */
-.time-sky-widget.sky-neutral {
-    background: linear-gradient(135deg, #faf5e9, #f2dfad);
-}
+.time-sky-widget.sky-neutral { background: linear-gradient(135deg, #faf5e9, #f2dfad); }
 .time-sky-widget.sky-neutral .sky-sun,
 .time-sky-widget.sky-neutral .sky-moon,
-.time-sky-widget.sky-neutral .sky-stars {
-    opacity: 0;
-}
+.time-sky-widget.sky-neutral .sky-stars { opacity: 0; }
 
-.time-sky-widget.sky-day {
-    background: linear-gradient(135deg, #87ceeb, #fef08a);
-}
-.time-sky-widget.sky-day .sky-sun {
-    opacity: 1;
-    transform: translateY(0);
-}
-.time-sky-widget.sky-day .sky-moon {
-    opacity: 0;
-    transform: translateY(20px);
-}
-.time-sky-widget.sky-day .sky-stars {
-    opacity: 0;
-}
+.time-sky-widget.sky-day { background: linear-gradient(135deg, #87ceeb, #fef08a); }
+.time-sky-widget.sky-day .sky-sun { opacity: 1; transform: translateY(0); }
+.time-sky-widget.sky-day .sky-moon { opacity: 0; transform: translateY(20px); }
+.time-sky-widget.sky-day .sky-stars { opacity: 0; }
 
-.time-sky-widget.sky-sunset {
-    background: linear-gradient(135deg, #f97316, #7e22ce);
-}
-.time-sky-widget.sky-sunset .sky-sun {
-    opacity: 0.8;
-    transform: translateY(32px) scale(0.85);
-}
-.time-sky-widget.sky-sunset .sky-moon {
-    opacity: 0.4;
-    transform: translateY(8px);
-}
-.time-sky-widget.sky-sunset .sky-stars {
-    opacity: 0.6;
-}
+.time-sky-widget.sky-sunset { background: linear-gradient(135deg, #f97316, #7e22ce); }
+.time-sky-widget.sky-sunset .sky-sun { opacity: 0.8; transform: translateY(32px) scale(0.85); }
+.time-sky-widget.sky-sunset .sky-moon { opacity: 0.4; transform: translateY(8px); }
+.time-sky-widget.sky-sunset .sky-stars { opacity: 0.6; }
 
-.time-sky-widget.sky-night {
-    background: linear-gradient(135deg, #0f172a, #1e1b4b);
-}
-.time-sky-widget.sky-night .sky-sun {
-    opacity: 0;
-    transform: translateY(45px) scale(0.5);
-}
-.time-sky-widget.sky-night .sky-moon {
-    opacity: 1;
-    transform: translateY(0);
-}
-.time-sky-widget.sky-night .sky-stars {
-    opacity: 1;
-}
+.time-sky-widget.sky-night { background: linear-gradient(135deg, #0f172a, #1e1b4b); }
+.time-sky-widget.sky-night .sky-sun { opacity: 0; transform: translateY(45px) scale(0.5); }
+.time-sky-widget.sky-night .sky-moon { opacity: 1; transform: translateY(0); }
+.time-sky-widget.sky-night .sky-stars { opacity: 1; }
 
-/* Clock Face */
+/* Ambient Clock & Pursuing Trail Effect */
 .clock-face {
     position: relative;
     z-index: 2;
-    width: 76px;
-    height: 76px;
+    width: 78px;
+    height: 78px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.95);
     border: 2px solid var(--gold);
-    box-shadow: 0 4px 12px rgba(79, 19, 38, 0.15);
+    box-shadow: 0 4px 15px rgba(79, 19, 38, 0.18), inset 0 0 10px rgba(181, 138, 54, 0.2);
     margin-left: auto;
+    transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease;
+}
+
+.clock-ambient-aura {
+    position: absolute;
+    right: 38px;
+    top: 50%;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, rgba(181, 138, 54, 0.4) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(50%, -50%);
+    transition: transform 0.15s ease-out;
+    z-index: 1;
 }
 
 .clock-center {
@@ -954,15 +865,267 @@ button[type="submit"] span {
     color: var(--dark-maroon);
 }
 
+/* Submit button */
+.interactive-btn {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid var(--gold);
+    border-radius: 6px;
+    background: var(--maroon);
+    color: white;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 15px rgba(121, 29, 53, 0.25);
+}
+
+.interactive-btn:hover {
+    background: var(--dark-maroon);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(121, 29, 53, 0.4);
+}
+
+.interactive-btn:active {
+    transform: translateY(-1px);
+}
+
+.interactive-btn span {
+    margin-left: 8px;
+    color: var(--light-gold);
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.interactive-btn:hover span {
+    transform: translateX(5px);
+}
+
+#formMessage {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Footer */
+.site-footer {
+    text-align: center;
+    padding: 10px 10px 20px;
+    color: var(--maroon);
+}
+
+.site-footer p:first-of-type {
+    font-size: 19px;
+    margin-bottom: 8px;
+}
+
+.site-footer p:last-of-type {
+    color: #947344;
+    font-size: 12px;
+}
+
+/* Floating skill bubbles */
+.floating-bubbles-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.skill-bubble {
+    position: absolute;
+    width: 125px;
+    height: 125px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 252, 240, 0.95), rgba(223, 193, 122, 0.85));
+    border: 2px solid var(--gold);
+    color: var(--maroon);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+    box-shadow: 0 4px 20px rgba(121, 29, 53, 0.12), inset 0 0 15px rgba(181, 138, 54, 0.2);
+    user-select: none;
+    will-change: transform;
+    padding: 10px;
+    transition: transform 0.2s ease;
+}
+
+.skill-bubble span {
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--dark-maroon);
+    margin-top: 4px;
+    font-weight: normal;
+}
+
+/* =====================================
+   FEATURE 2: 3D SKILLS CAROUSEL
+===================================== */
+.skills-carousel-section {
+    max-width: 620px;
+    margin: 40px auto 25px;
+    padding: 30px;
+    background: #fffaf0;
+    border: 1px solid var(--light-gold);
+    border-radius: 8px;
+    box-shadow: 0 8px 30px rgba(121, 29, 53, 0.08);
+}
+
+.carousel-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    position: relative;
+    margin-top: 20px;
+}
+
+.carousel-3d-scene {
+    width: 260px;
+    height: 180px;
+    perspective: 1000px;
+    position: relative;
+    overflow: hidden;
+}
+
+.carousel-3d-ring {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.skill-card {
+    position: absolute;
+    width: 240px;
+    height: 160px;
+    left: 10px;
+    top: 10px;
+    background: var(--white);
+    border: 2px solid var(--gold);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 8px 25px rgba(79, 19, 38, 0.15);
+    backface-visibility: hidden;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.skill-card h3 {
+    color: var(--maroon);
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.skill-card p {
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.carousel-btn {
+    background: #fff9eb;
+    border: 1px solid var(--light-gold);
+    color: var(--maroon);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 10;
+    box-shadow: 0 4px 10px rgba(121, 29, 53, 0.1);
+}
+
+.carousel-btn:hover {
+    background: var(--maroon);
+    color: var(--white);
+    border-color: var(--maroon);
+    transform: scale(1.1);
+}
+
+.carousel-btn:active {
+    transform: scale(0.92);
+}
+
+.skill-card[data-index="0"] { transform: rotateY(0deg) translateZ(160px); }
+.skill-card[data-index="1"] { transform: rotateY(90deg) translateZ(160px); }
+.skill-card[data-index="2"] { transform: rotateY(180deg) translateZ(160px); }
+.skill-card[data-index="3"] { transform: rotateY(270deg) translateZ(160px); }
+
+@media (max-width: 600px) {
+    .carousel-3d-scene {
+        width: 100%;
+        height: auto;
+        perspective: none;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+    .carousel-3d-ring {
+        position: relative;
+        display: flex;
+        gap: 15px;
+        transform-style: flat;
+        transform: none !important;
+        width: max-content;
+        padding: 10px;
+    }
+    .skill-card {
+        position: relative;
+        left: auto;
+        top: auto;
+        width: 220px;
+        height: 150px;
+        transform: none !important;
+        flex-shrink: 0;
+    }
+    .carousel-btn {
+        display: none;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
-    .time-sky-widget,
-    .sky-sun,
-    .sky-moon,
-    .sky-stars,
-    .clock-hand {
+    .carousel-3d-ring {
         transition: none !important;
     }
 }
 
+/* Responsive */
+@media (max-width: 700px) {
+    body { padding: 12px 8px; }
+    .page-shell { padding: 20px 16px; }
+    .site-header { padding: 25px 8px; }
+    .intro-section { grid-template-columns: 1fr; gap: 25px; text-align: center; }
+    .intro-text h2 { font-size: 23px; }
+    .registration-form { padding: 22px 16px; }
+    .form-row { grid-template-columns: 1fr; gap: 0; }
+    .sun-mark { width: 165px; height: 165px; }
+    .kundli-diagram { width: 115px; height: 115px; }
+    .page-shell::before, .page-shell::after { font-size: 25px; }
+}
 
-
+@media (prefers-reduced-motion: reduce) {
+    .floating-bubbles-container, .cursor-glow, .clock-ambient-aura {
+        display: none;
+    }
+    .sun-mark, .kundli-card, .om-emblem {
+        animation: none !important;
+    }
+}
