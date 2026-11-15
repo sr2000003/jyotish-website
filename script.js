@@ -59,3 +59,63 @@ form.addEventListener("submit", async function (event) {
     submitButton.textContent = "Submit Registration";
   }
 });
+
+// Floating Skill Bubbles Physics & Animation
+document.addEventListener("DOMContentLoaded", function () {
+  const bubbles = document.querySelectorAll(".skill-bubble");
+  if (!bubbles.length) return;
+
+  // Respect reduced motion
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return;
+  }
+
+  const bubbleData = Array.from(bubbles).map((bubble, index) => {
+    const size = 125;
+    
+    // Stagger initial positions across the screen
+    let x = (index * (window.innerWidth / 4)) % Math.max(100, window.innerWidth - size);
+    let y = 60 + (index * 90) % Math.max(100, window.innerHeight - size - 120);
+
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 0.5 + Math.random() * 0.5;
+    let vx = Math.cos(angle) * speed;
+    let vy = Math.sin(angle) * speed;
+
+    return { element: bubble, x, y, vx, vy, size };
+  });
+
+  function animateBubbles() {
+    const maxX = window.innerWidth;
+    const maxY = window.innerHeight;
+
+    bubbleData.forEach((b) => {
+      b.x += b.vx;
+      b.y += b.vy;
+
+      // Bounce off walls
+      if (b.x <= 0) {
+        b.x = 0;
+        b.vx = -b.vx;
+      } else if (b.x + b.size >= maxX) {
+        b.x = maxX - b.size;
+        b.vx = -b.vx;
+      }
+
+      if (b.y <= 0) {
+        b.y = 0;
+        b.vy = -b.vy;
+      } else if (b.y + b.size >= maxY) {
+        b.y = maxY - b.size;
+        b.vy = -b.vy;
+      }
+
+      b.element.style.transform = `translate3d(${b.x}px, ${b.y}px, 0)`;
+    });
+
+    requestAnimationFrame(animateBubbles);
+  }
+
+  requestAnimationFrame(animateBubbles);
+});
+
