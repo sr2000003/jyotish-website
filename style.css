@@ -902,3 +902,13 @@ a,
 .glass-form {
   cursor: default;
 }
+
+/* Hide the top-left title block */
+.title {
+  display: none !important;
+}
+
+/* Hide the top-right controls panel from visitors */
+.controls {
+  display: none !important;
+}
