@@ -1,1748 +1,711 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Jyotish astrology consultation: book a personal Vedic birth chart reading, Vastu guidance, planetary remedies and gemstone advice.">
-    <title>Jyotish Astrology Consultation - Advanced Portal</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        /* ==========================================================
-           NIGHT-SKY THEME LAYER (loads after style.css and overrides it)
-           ========================================================== */
-        :root {
-            --sky-ink: #070b17;
-            --sky-deep: #0f1830;
-            --sky-gold: #d4b25c;
-            --sky-gold-soft: #f0dca2;
-            --sky-cream: #f1e8d0;
-            --sky-muted: #bcae90;
-            --glass: rgba(8, 12, 24, 0.38);
-        }
-
-        html {
-            background:
-                radial-gradient(ellipse at 50% -10%, var(--sky-deep) 0%, transparent 60%),
-                var(--sky-ink);
-            min-height: 100%;
-        }
-
-        body {
-            background: transparent;
-            color: var(--sky-cream);
-            min-height: 100vh;
-        }
-
-        /* The cosmic canvas sits fixed behind all content */
-        #cosmicBg {
-            position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-            display: block;
-        }
-
-        /* Page shell: transparent so the sky shows through */
-        .page-shell {
-            background: transparent;
-            border-color: rgba(212, 178, 92, 0.55);
-            outline-color: rgba(212, 178, 92, 0.25);
-            box-shadow: none;
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-        }
-
-        .page-shell,
-        main,
-        .site-footer,
-        .site-header {
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Wide screens: solar system on the left, form and services on the right */
-        @media (min-width: 900px) {
-            .page-shell {
-                max-width: 1200px;
-            }
-
-            main {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                column-gap: 32px;
-                align-items: start;
-            }
-
-            .intro-section {
-                grid-column: 1;
-                grid-row: 1;
-                align-self: center;
-                padding: 40px 15px;
-            }
-
-            .registration-form {
-                grid-column: 2;
-                grid-row: 1;
-                max-width: none;
-                margin: 0 0 25px;
-            }
-
-            .skills-carousel-section {
-                grid-column: 2;
-                grid-row: 2;
-                max-width: none;
-                margin: 0 0 25px;
-            }
-        }
-
-        /* Intro: single column text */
-        .intro-section {
-            grid-template-columns: 1fr;
-            text-align: center;
-        }
-
-        .intro-note {
-            display: inline-block;
-            text-align: left;
-            border-left-color: var(--sky-gold);
-        }
-
-        /* Headings: gold gradient text */
-        .site-header h1,
-        .form-heading h2,
-        .intro-text h2 {
-            background: linear-gradient(135deg, var(--sky-gold) 0%, var(--sky-gold-soft) 50%, var(--sky-gold) 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .eyebrow {
-            color: var(--sky-gold);
-        }
-
-        .site-header h2 {
-            color: var(--sky-gold);
-        }
-
-        .header-description,
-        .form-heading p,
-        .required-note {
-            color: var(--sky-muted);
-        }
-
-        .intro-text > p:not(.eyebrow) {
-            color: var(--sky-cream);
-        }
-
-        /* Translucent panels for the form and services.
-           The form sits above the services so its pop-ups are never covered. */
-        .registration-form {
-            position: relative;
-            z-index: 5;
-            background: var(--glass);
-            border: 1px solid rgba(212, 178, 92, 0.2);
-            border-radius: 14px;
-            box-shadow: none;
-            backdrop-filter: blur(3px);
-            -webkit-backdrop-filter: blur(3px);
-        }
-
-        .skills-carousel-section {
-            position: relative;
-            z-index: 1;
-            background: var(--glass);
-            border: 1px solid rgba(212, 178, 92, 0.2);
-            border-radius: 14px;
-            box-shadow: none;
-            backdrop-filter: blur(3px);
-            -webkit-backdrop-filter: blur(3px);
-        }
-
-        /* Form labels and inputs on dark glass */
-        .form-group label {
-            color: var(--sky-gold-soft);
-        }
-
-        .form-group input {
-            background: rgba(7, 11, 23, 0.55);
-            border-color: rgba(212, 178, 92, 0.3);
-            color: var(--sky-cream);
-            color-scheme: dark;
-        }
-
-        .form-group input::placeholder {
-            color: rgba(241, 232, 208, 0.45);
-        }
-
-        .form-group input:focus {
-            border-color: var(--sky-gold);
-            box-shadow: 0 0 0 4px rgba(212, 178, 92, 0.15);
-        }
-
-        /* Two fields side by side: each column keeps its own height */
-        .form-row {
-            align-items: start;
-        }
-
-        /* Pickers open on click; typing is blocked, so required checks still work */
-        #dateOfBirth,
-        #timeOfBirth {
-            cursor: pointer;
-        }
-
-        /* ---------- Date of birth calendar ---------- */
-        .calendar-wrapper {
-            align-self: start;
-            position: relative;
-        }
-
-        .calendar-wrapper:has(.calendar-popup:not([hidden])) {
-            z-index: 500;
-        }
-
-        .calendar-popup {
-            top: calc(100% + 6px);
-            left: 0;
-            width: 320px;
-            max-width: calc(100vw - 48px);
-            padding: 14px;
-            background: #fffdf8;
-            transition: none;
-            transform: none;
-            z-index: 500;
-        }
-
-        .calendar-header {
-            gap: 6px;
-            margin-bottom: 10px;
-        }
-
-        .calendar-header select {
-            flex: 1;
-            min-width: 0;
-            padding: 6px 8px;
-            border: 1px solid var(--light-gold);
-            border-radius: 6px;
-            background: #fff9eb;
-            color: var(--maroon);
-            font-family: inherit;
-            font-size: 13px;
-            cursor: pointer;
-        }
-
-        .calendar-header select:focus-visible {
-            outline: 2px solid var(--sky-gold);
-            outline-offset: 2px;
-        }
-
-        .calendar-weekdays {
-            margin-bottom: 6px;
-        }
-
-        .calendar-days {
-            gap: 4px;
-        }
-
-        button.calendar-day {
-            border: none;
-            font: inherit;
-            padding: 0;
-        }
-
-        .calendar-day {
-            aspect-ratio: auto;
-            height: 36px;
-        }
-
-        .calendar-day:focus-visible {
-            outline: 2px solid var(--sky-gold);
-            outline-offset: 2px;
-        }
-
-        /* ---------- Time of birth clock popup ---------- */
-        .time-field {
-            position: relative;
-            z-index: 1;
-        }
-
-        .time-field:has(.time-popup:not([hidden])) {
-            z-index: 500;
-        }
-
-        .time-popup {
-            position: absolute;
-            top: calc(100% + 6px);
-            left: 0;
-            width: min(300px, calc(100vw - 48px));
-            padding: 14px;
-            background: #fffdf8;
-            border: 2px solid var(--gold);
-            border-radius: 10px;
-            box-shadow: 0 15px 40px rgba(79, 19, 38, 0.25);
-            z-index: 500;
-            color: var(--text);
-        }
-
-        .time-popup[hidden] {
-            display: none;
-        }
-
-        .time-popup-top {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
-        .time-popup-top select {
-            flex: 1;
-            min-width: 0;
-            padding: 6px 8px;
-            border: 1px solid var(--light-gold);
-            border-radius: 6px;
-            background: #fff9eb;
-            color: var(--maroon);
-            font-family: inherit;
-            font-size: 13px;
-            cursor: pointer;
-        }
-
-        .ampm {
-            display: flex;
-            border: 1px solid var(--gold);
-            border-radius: 6px;
-            overflow: hidden;
-        }
-
-        .ampm button {
-            padding: 6px 10px;
-            border: none;
-            background: #fff9eb;
-            color: var(--maroon);
-            font-family: inherit;
-            font-size: 13px;
-            cursor: pointer;
-        }
-
-        .ampm button[aria-pressed="true"] {
-            background: var(--maroon);
-            color: var(--white);
-        }
-
-        .time-readout {
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--maroon);
-            margin: 4px 0 4px;
-        }
-
-        #tpFace {
-            display: block;
-            width: 200px;
-            height: 200px;
-            margin: 0 auto;
-            touch-action: none;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .tp-num {
-            fill: var(--dark-maroon);
-            font-family: Georgia, serif;
-            font-size: 13px;
-            text-anchor: middle;
-            dominant-baseline: central;
-            pointer-events: none;
-        }
-
-        .time-popup-bottom {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-        }
-
-        .time-popup-bottom button {
-            padding: 7px 16px;
-            border: 1px solid var(--gold);
-            border-radius: 6px;
-            background: #fff9eb;
-            color: var(--maroon);
-            font-family: inherit;
-            font-size: 13px;
-            cursor: pointer;
-        }
-
-        .time-popup-bottom button.primary {
-            background: var(--maroon);
-            color: var(--white);
-        }
-
-        /* ---------- Time of birth clock card: dark glass to match the form ---------- */
-        .time-sky-widget {
-            margin-top: 10px;
-            height: 115px;
-            border: 1px solid rgba(212, 178, 92, 0.3);
-            border-radius: 10px;
-            background: rgba(7, 11, 23, 0.55);
-            box-shadow: none;
-        }
-
-        .time-sky-widget:hover {
-            box-shadow: 0 6px 20px rgba(212, 178, 92, 0.15);
-        }
-
-        .time-sky-widget.sky-neutral {
-            background: rgba(7, 11, 23, 0.55);
-        }
-
-        .time-sky-widget.sky-day {
-            background: linear-gradient(135deg, #3b6fa8, #c9a24a);
-        }
-
-        .time-sky-widget.sky-sunset {
-            background: linear-gradient(135deg, #7a3a1d, #3b1d5e);
-        }
-
-        .time-sky-widget.sky-night {
-            background: linear-gradient(135deg, #070b17, #1a1640);
-        }
-
-        .clock-face {
-            background: #fffaf0;
-        }
-
-        /* Clear focus rings for keyboard users */
-        .registration-form input:focus-visible,
-        .interactive-btn:focus-visible,
-        .carousel-btn:focus-visible,
-        .calendar-popup button:focus-visible,
-        .time-popup button:focus-visible,
-        .time-popup select:focus-visible,
-        .skill-card:focus-visible,
-        a:focus-visible {
-            outline: 2px solid var(--sky-gold);
-            outline-offset: 3px;
-            border-radius: 6px;
-        }
-
-        /* Services cards: gold halo on hover and focus.
-           Transform is kept for the 3D carousel motion. */
-        .skill-card {
-            transition: transform 0.4s ease, opacity 0.4s ease, box-shadow 0.35s ease, border-color 0.35s ease;
-        }
-
-        .skill-card:hover,
-        .skill-card:focus-within {
-            border-color: var(--sky-gold);
-            box-shadow: 0 10px 36px rgba(212, 178, 92, 0.18);
-        }
-
-        .interactive-btn:hover {
-            box-shadow: 0 8px 30px rgba(212, 178, 92, 0.25);
-        }
-
-        .site-footer {
-            color: var(--sky-gold);
-        }
-
-        .site-footer p:last-of-type {
-            color: var(--sky-muted);
-        }
-
-        @media (max-width: 600px) {
-            .registration-form,
-            .skills-carousel-section {
-                border-radius: 12px;
-            }
-        }
-
-        /* Clock card: follow the time instantly so the sky tracks the hands */
-        .time-sky-widget,
-        .time-sky-widget .sky-sun,
-        .time-sky-widget .sky-moon,
-        .time-sky-widget .sky-stars,
-        .time-sky-widget .sky-horizon {
-            transition: none;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.001ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.001ms !important;
-                scroll-behavior: auto !important;
-            }
-        }
-    </style>
-    <script src="script.js" defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solar System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <!-- Interactive Background Glow -->
-    <div class="cursor-glow" aria-hidden="true"></div>
+  <!-- Vanta animated background sits behind everything -->
+  <div id="vanta-bg"></div>
 
-    <canvas id="cosmicBg" aria-hidden="true"></canvas>
+  <!-- Solar system is drawn on this transparent canvas by script.js -->
+  <canvas id="space"></canvas>
 
-    <div class="page-shell">
-        <header class="site-header">
-            <div class="om-emblem pulse-glow">ॐ</div>
-            <p class="eyebrow">VEDIC ASTROLOGY &amp; GUIDANCE</p>
-            <h1>ज्योतिष परामर्श केंद्र</h1>
-            <h2>Jyotish Astrology Consultation</h2>
-            <p class="header-description">
-                Discover the wisdom of the stars with immersive cosmic guidance.
-                Register for your personal astrology consultation.
-            </p>
-            <div class="gold-divider">
-                <span>✦</span>
-            </div>
-        </header>
+  <header class="title">
+    <h1>Solar System</h1>
+    <p>Interactive 3D model</p>
+  </header>
 
-        <main>
-            <section class="intro-section">
-                <div class="intro-text">
-                    <p class="eyebrow">YOUR JOURNEY BEGINS HERE</p>
-                    <h2>Personal Astrology Consultation</h2>
-                    <p>
-                        Your birth details help prepare the foundation
-                        for your astrological consultation.
-                    </p>
-                    <p class="intro-note">
-                        Please provide accurate birth information
-                        before submitting your registration.
-                    </p>
-                </div>
-            </section>
-
-            <section class="registration-form">
-                <div class="form-heading">
-                    <span class="heading-symbol">✦</span>
-                    <h2>Client Registration</h2>
-                    <p>कृपया अपनी जन्म जानकारी भरें</p>
-                </div>
-
-                <form id="registrationForm">
-                    <div class="form-group">
-                        <label for="fullName">Full Name *</label>
-                        <div class="input-with-preview">
-                            <input
-                                type="text"
-                                id="fullName"
-                                name="fullName"
-                                placeholder="Enter your full name"
-                                autocomplete="name"
-                                required
-                            >
-                            <div id="fallingLettersPreview" class="falling-letters-preview" aria-hidden="true"></div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="contactNumber">Contact Number *</label>
-                        <input
-                            type="tel"
-                            id="contactNumber"
-                            name="contactNumber"
-                            placeholder="Enter your contact number"
-                            autocomplete="tel"
-                            required
-                        >
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group calendar-wrapper">
-                            <label for="dateOfBirth">Date of Birth *</label>
-                            <input
-                                type="text"
-                                id="dateOfBirth"
-                                name="dateOfBirth"
-                                placeholder="Select your date of birth"
-                                autocomplete="off"
-                                required
-                            >
-                            <div id="dobPopup" class="calendar-popup" hidden>
-                                <!-- FIXED DOM STRUCTURE: Animation layer sits here cleanly behind the interactive calendar elements -->
-                                <div class="seasonal-bg" aria-hidden="true"></div>
-
-                                <div class="calendar-header">
-                                    <button type="button" id="dobPrev" aria-label="Previous month">‹</button>
-                                    <select id="dobMonth" aria-label="Month"></select>
-                                    <select id="dobYear" aria-label="Year"></select>
-                                    <button type="button" id="dobNext" aria-label="Next month">›</button>
-                                </div>
-                                <div class="calendar-weekdays">
-                                    <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
-                                </div>
-                                <div id="dobDays" class="calendar-days"></div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="timeOfBirth">Time of Birth *</label>
-                            <div class="time-field">
-                                <input
-                                    type="text"
-                                    id="timeOfBirth"
-                                    name="timeOfBirth"
-                                    placeholder="Select your time of birth"
-                                    autocomplete="off"
-                                    required
-                                >
-                                <div id="timePopup" class="time-popup" hidden>
-                                    <div id="tpSky" class="tp-sky" aria-hidden="true">
-                                        <div id="tpSun" class="tp-sky-sun"></div>
-                                        <div id="tpMoon" class="tp-sky-moon"></div>
-                                        <div id="tpStars" class="tp-sky-stars">
-                                            <span>✦</span>
-                                            <span>✦</span>
-                                            <span>✦</span>
-                                            <span>✦</span>
-                                        </div>
-                                        <div id="tpHorizon" class="tp-sky-horizon"></div>
-                                    </div>
-                                    <div class="time-popup-top">
-                                        <select id="tpHour" aria-label="Hour"></select>
-                                        <select id="tpMinute" aria-label="Minute"></select>
-                                        <div class="ampm" role="group" aria-label="AM or PM">
-                                            <button type="button" id="tpAM" aria-pressed="true">AM</button>
-                                            <button type="button" id="tpPM" aria-pressed="false">PM</button>
-                                        </div>
-                                    </div>
-                                    <div id="tpReadout" class="time-readout" aria-live="polite">--:-- --</div>
-                                    <svg id="tpFace" viewBox="0 0 200 200" role="img" aria-label="Clock face. Drag the outer ring for minutes and the inner ring for hours.">
-                                        <circle cx="100" cy="100" r="96" fill="#fff9eb" stroke="#b58a36" stroke-width="2"></circle>
-                                        <g id="tpMarks"></g>
-                                        <g id="tpHourHand">
-                                            <line x1="100" y1="100" x2="100" y2="48" stroke="#791d35" stroke-width="5" stroke-linecap="round"></line>
-                                        </g>
-                                        <g id="tpMinuteHand">
-                                            <line x1="100" y1="100" x2="100" y2="22" stroke="#b58a36" stroke-width="3" stroke-linecap="round"></line>
-                                        </g>
-                                        <circle cx="100" cy="100" r="5" fill="#791d35"></circle>
-                                    </svg>
-                                    <div class="time-popup-bottom">
-                                        <button type="button" id="tpClear">Clear</button>
-                                        <button type="button" id="tpDone" class="primary">Done</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="placeOfBirth">Place of Birth *</label>
-                        <input
-                            type="text"
-                            id="placeOfBirth"
-                            name="placeOfBirth"
-                            placeholder="City, State, Country"
-                            autocomplete="off"
-                            required
-                        >
-                    </div>
-
-                    <p class="required-note">
-                        * All fields are required.
-                    </p>
-
-                    <button type="submit" class="interactive-btn">
-                        Submit Registration
-                        <span>→</span>
-                    </button>
-
-                    <p
-                        id="formMessage"
-                        role="status"
-                        aria-live="polite"
-                    ></p>
-                </form>
-            </section>
-
-            <section class="skills-carousel-section">
-                <div class="form-heading">
-                    <span class="heading-symbol">✦</span>
-                    <h2>Explore Our Astrology Services</h2>
-                    <p>विशेष ज्योतिषीय सेवाएँ</p>
-                </div>
-                <div class="carousel-container">
-                    <button type="button" class="carousel-btn prev-btn" aria-label="Previous Skill">‹</button>
-                    <div class="carousel-3d-scene">
-                        <div class="carousel-3d-ring" id="skillsCarouselRing">
-                            <div class="skill-card" data-index="0" tabindex="0">
-                                <h3>जन्म कुंडली</h3>
-                                <p>Janam Kundli: Comprehensive birth chart analysis.</p>
-                            </div>
-                            <div class="skill-card" data-index="1" tabindex="0">
-                                <h3>वास्तु परामर्श</h3>
-                                <p>Vastu Paramarsh: Harmonize living and working spaces.</p>
-                            </div>
-                            <div class="skill-card" data-index="2" tabindex="0">
-                                <h3>ग्रह दोष निवारण</h3>
-                                <p>Grah Dosh Nivaran: Remedies for planetary afflictions.</p>
-                            </div>
-                            <div class="skill-card" data-index="3" tabindex="0">
-                                <h3>रत्न सलाह</h3>
-                                <p>Ratan Salah: Astrological gemstone recommendations.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <button type="button" class="carousel-btn next-btn" aria-label="Next Skill">›</button>
-                </div>
-            </section>
-        </main>
-
-        <footer class="site-footer">
-            <div class="gold-divider"><span>✦</span></div>
-            <p>ॐ शुभम भवतु ॐ</p>
-            <p>© Jyotish Astrology Consultation</p>
-        </footer>
+  <div class="controls panel">
+    <div class="speed">
+      <div class="speed-head">
+        <label for="speed">Speed</label>
+        <span id="speedVal">1.0×</span>
+      </div>
+      <input type="range" id="speed" min="0" max="5" step="0.1" value="1" />
     </div>
+    <div class="divider"></div>
+    <div class="buttons">
+      <button id="pauseBtn" title="Pause">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14" /></svg>
+      </button>
+      <button id="orbitBtn" class="on" title="Toggle orbits">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="1.5" /></svg>
+      </button>
+      <button id="labelBtn" class="on" title="Toggle labels">
+        <svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h10M5 17h7" /></svg>
+      </button>
+      <button id="resetBtn" title="Reset view">
+        <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v4h4" /></svg>
+      </button>
+    </div>
+  </div>
 
-    <div id="toast" role="status" aria-live="polite"></div>
+  <nav class="planet-bar panel" id="planetBar"></nav>
 
-    <script>
-    /* ==========================================================
-       DATE OF BIRTH CALENDAR: pick day, month and year.
-       Stores the value as YYYY-MM-DD in #dateOfBirth.
-       ========================================================== */
-    (function () {
-        "use strict";
+  <aside class="info panel" id="info">
+    <button class="close" id="closeInfo" aria-label="Close">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" /></svg>
+    </button>
+    <div class="info-head">
+      <span class="info-dot" id="infoDot"></span>
+      <span class="info-type" id="infoType"></span>
+    </div>
+    <h2 id="infoName"></h2>
+    <p class="info-desc" id="infoDesc"></p>
+    <dl class="stats" id="infoStats"></dl>
+    <div class="fact">
+      <span>Did you know?</span>
+      <p id="infoFact"></p>
+    </div>
+  </aside>
 
-        var input = document.getElementById("dateOfBirth");
-        var popup = document.getElementById("dobPopup");
-        var monthSel = document.getElementById("dobMonth");
-        var yearSel = document.getElementById("dobYear");
-        var daysBox = document.getElementById("dobDays");
-        var prevBtn = document.getElementById("dobPrev");
-        var nextBtn = document.getElementById("dobNext");
-        if (!input || !popup) return;
+  <p class="hint" id="hint">Drag to rotate · Scroll to zoom · Click a planet</p>
 
-        var MONTHS = ["January", "February", "March", "April", "May", "June",
-                      "July", "August", "September", "October", "November", "December"];
-        var today = new Date();
-        var MIN_YEAR = 1900;
-        var MAX_YEAR = today.getFullYear();
-        var viewYear = MAX_YEAR - 25;
-        var viewMonth = 0;
+  <!-- Vanta.js background (free, loaded from CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.dots.min.js"></script>
+  <script>
+    VANTA.DOTS({ el: "#vanta-bg", mouseControls: true, touchControls: true, minHeight: 200, minWidth: 200, backgroundColor: 0xe17808, color: 0xffffff, color2: 0x8888ff, size: 3, spacing: 25, showLines: false });
+  </script>
 
-        MONTHS.forEach(function (name, i) {
-            monthSel.add(new Option(name, i));
+  <script src="script.js"></script>
+  <div class="glass-form" id="glassForm">
+    <form id="birthForm">
+        <h2>Birth Details</h2>
+        <div class="gf-inputbox">
+          <input type="text" id="fullName" name="fullname" required>
+          <label>Full name</label>
+        </div>
+        <div class="gf-inputbox">
+          <input type="tel" id="contactNumber" name="contact" required>
+          <label>Contact no.</label>
+        </div>
+        <div class="gf-inputbox gf-fixed">
+          <input type="text" id="dateOfBirth" name="dob" readonly required placeholder="DD/MM/YYYY">
+          <label>Date of birth</label>
+        </div>
+        <div class="gf-inputbox gf-fixed">
+          <input type="text" id="timeOfBirth" name="tob" readonly required placeholder="HH:MM AM">
+          <label>Time of birth</label>
+        </div>
+        <div class="gf-inputbox">
+          <input type="text" id="placeOfBirth" name="pob" required>
+          <label>Place of birth</label>
+        </div>
+        <button type="submit">Submit</button>
+        <p id="formMessage" class="form-msg"></p>
+      </form>
+  </div>
+
+  
+  <div class="cal-pop" id="calPop">
+    <canvas id="calCanvas"></canvas>
+  </div>
+
+  <script>
+  (() => {
+    const pop = document.getElementById("calPop");
+    const cvs = document.getElementById("calCanvas");
+    const ctx = cvs.getContext("2d");
+    const dobInput = document.querySelector('input[name="dob"]');
+
+    const CW = 300, CH = 326, PAD = 16, HEAD_H = 56, WD_H = 28, CELL_H = 36;
+    const GRID_Y = HEAD_H + WD_H;
+    const CELL_W = (CW - PAD * 2) / 7;
+    const YEAR_COLS = 3, YEAR_ROWS = 4, YEAR_H = 44;
+    const YEAR_W = (CW - PAD * 2) / YEAR_COLS;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cvs.width = CW * dpr; cvs.height = CH * dpr;
+    cvs.style.width = CW + "px"; cvs.style.height = CH + "px";
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    const WEEK = ["Su","Mo","Tu","We","Th","Fr","Sa"];
+    const now = new Date();
+    const S = {
+      year: now.getFullYear(), month: now.getMonth(), sel: null,
+      open: 0, openTarget: 0, slide: 0, pulse: 0,
+      view: "days", mix: 0, mixTarget: 0, yearStart: now.getFullYear() - 5,
+      hover: -1, hoverYear: -1, hoverNav: 0, running: false,
+      indDay: { x: 0, y: 0, a: 0, ready: false },
+      indYear: { x: 0, y: 0, a: 0, ready: false }
+    };
+
+    const daysIn = (y, m) => new Date(y, m + 1, 0).getDate();
+    const firstDay = (y, m) => new Date(y, m, 1).getDay();
+    const cellPos = i => ({ x: PAD + (i % 7) * CELL_W, y: GRID_Y + Math.floor(i / 7) * CELL_H });
+    const dayAt = i => { const d = i - firstDay(S.year, S.month) + 1; return d >= 1 && d <= daysIn(S.year, S.month) ? d : 0; };
+    const pad2 = n => String(n).padStart(2, "0");
+
+    function hitCell(x, y) {
+      if (y < GRID_Y || y > GRID_Y + 6 * CELL_H || x < PAD) return -1;
+      const col = Math.floor((x - PAD) / CELL_W), row = Math.floor((y - GRID_Y) / CELL_H);
+      if (col < 0 || col > 6) return -1;
+      return row * 7 + col;
+    }
+
+    function yearPos(i) {
+      return { x: PAD + (i % YEAR_COLS) * YEAR_W, y: GRID_Y + Math.floor(i / YEAR_COLS) * YEAR_H };
+    }
+
+    function hitYear(x, y) {
+      if (y < GRID_Y || y > GRID_Y + YEAR_ROWS * YEAR_H || x < PAD || x > CW - PAD) return -1;
+      const col = Math.min(YEAR_COLS - 1, Math.floor((x - PAD) / YEAR_W));
+      const row = Math.floor((y - GRID_Y) / YEAR_H);
+      return row * YEAR_COLS + col;
+    }
+
+    function dayTarget() {
+      if (!S.sel || S.sel.y !== S.year || S.sel.m !== S.month) return null;
+      const p = cellPos(firstDay(S.year, S.month) + S.sel.d - 1);
+      return { x: p.x + CELL_W / 2, y: p.y + CELL_H / 2 };
+    }
+
+    function yearTarget() {
+      const i = S.year - S.yearStart;
+      if (i < 0 || i >= YEAR_COLS * YEAR_ROWS) return null;
+      const p = yearPos(i);
+      return { x: p.x + YEAR_W / 2, y: p.y + YEAR_H / 2 };
+    }
+
+    // Smoothly moves the highlight toward its target and fades it in or out
+    function glide(k, t) {
+      if (t && !k.ready) { k.x = t.x; k.y = t.y; k.ready = true; }
+      if (t) { k.x += (t.x - k.x) * 0.25; k.y += (t.y - k.y) * 0.25; }
+      k.a += ((t ? 1 : 0) - k.a) * 0.2;
+    }
+
+    function drawChevron(x, y, dir, hot) {
+      ctx.save();
+      ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.lineCap = "round"; ctx.lineJoin = "round";
+      ctx.globalAlpha *= hot ? 1 : 0.75;
+      ctx.beginPath();
+      ctx.moveTo(x - dir * 4, y - 7); ctx.lineTo(x + dir * 4, y); ctx.lineTo(x - dir * 4, y + 7);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // Blue glowing highlight with a glass reflection
+    function drawPill(k, w, h, base) {
+      if (k.a < 0.01 || base < 0.01) return;
+      const pr = 1 + S.pulse * 0.18, W = w * pr, H = h * pr;
+      const g = ctx.createLinearGradient(0, k.y - H / 2, 0, k.y + H / 2);
+      g.addColorStop(0, "#9ccaff"); g.addColorStop(0.55, "#3b82f6"); g.addColorStop(1, "#1e4fd0");
+      ctx.save();
+      ctx.globalAlpha = k.a * base;
+      ctx.shadowColor = "rgba(59,130,246,0.9)"; ctx.shadowBlur = 18;
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.roundRect(k.x - W / 2, k.y - H / 2, W, H, 9); ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = "rgba(255,255,255,0.35)";
+      ctx.beginPath(); ctx.roundRect(k.x - W / 2 + 3, k.y - H / 2 + 3, W - 6, H * 0.42, 6); ctx.fill();
+      ctx.restore();
+    }
+
+    function drawDays(base, o) {
+      const today = new Date();
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      for (let i = 0; i < 42; i++) {
+        const d = dayAt(i);
+        if (!d) continue;
+        const p = cellPos(i);
+        const cx = p.x + CELL_W / 2, cy = p.y + CELL_H / 2;
+        const sel = S.sel && S.sel.d === d && S.sel.m === S.month && S.sel.y === S.year;
+        const enter = Math.max(0, Math.min(1, o * 1.6 - (i % 7) * 0.05 - Math.floor(i / 7) * 0.06));
+        ctx.globalAlpha = enter * base;
+        if (i === S.hover && !sel) {
+          ctx.strokeStyle = "rgba(255,255,255,0.4)"; ctx.lineWidth = 1.2;
+          ctx.beginPath(); ctx.arc(cx, cy, 15, 0, Math.PI * 2); ctx.stroke();
+        }
+        ctx.font = (sel ? "600" : "400") + " 14px Inter, system-ui, sans-serif";
+        ctx.fillStyle = "#fff";
+        ctx.fillText(String(d), cx, cy);
+        if (d === today.getDate() && S.month === today.getMonth() && S.year === today.getFullYear()) {
+          ctx.fillStyle = "#7fb6ff";
+          ctx.beginPath(); ctx.arc(cx, cy + 12, 2, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+    }
+
+    function drawYears(base, o) {
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      for (let i = 0; i < YEAR_COLS * YEAR_ROWS; i++) {
+        const y = S.yearStart + i, p = yearPos(i);
+        const cx = p.x + YEAR_W / 2, cy = p.y + YEAR_H / 2;
+        const enter = Math.max(0, Math.min(1, o * 1.6 - (i % YEAR_COLS) * 0.05 - Math.floor(i / YEAR_COLS) * 0.06));
+        const sel = y === S.year;
+        ctx.globalAlpha = enter * base;
+        if (i === S.hoverYear && !sel) {
+          ctx.strokeStyle = "rgba(255,255,255,0.4)"; ctx.lineWidth = 1.2;
+          ctx.beginPath(); ctx.roundRect(cx - 34, cy - 16, 68, 32, 9); ctx.stroke();
+        }
+        ctx.font = (sel ? "600" : "400") + " 15px Inter, system-ui, sans-serif";
+        ctx.fillStyle = "#fff";
+        ctx.fillText(String(y), cx, cy);
+      }
+    }
+
+    function draw() {
+      const o = S.open, m = S.mix, dayA = o * (1 - m), yearA = o * m;
+      glide(S.indDay, dayTarget());
+      glide(S.indYear, yearTarget());
+      ctx.clearRect(0, 0, CW, CH);
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+
+      // Header: month title in day view, year range in year view
+      ctx.fillStyle = "#fff";
+      ctx.font = "600 16px Inter, system-ui, sans-serif";
+      ctx.globalAlpha = dayA;
+      ctx.fillText(MONTHS[S.month] + " " + S.year, CW / 2, 28);
+      ctx.globalAlpha = yearA;
+      ctx.fillText(S.yearStart + " - " + (S.yearStart + 11), CW / 2, 28);
+
+      ctx.globalAlpha = o;
+      drawChevron(PAD + 8, 28, -1, S.hoverNav === -1);
+      drawChevron(CW - PAD - 8, 28, 1, S.hoverNav === 1);
+      ctx.strokeStyle = "rgba(255,255,255,0.25)"; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(PAD, HEAD_H - 4); ctx.lineTo(CW - PAD, HEAD_H - 4); ctx.stroke();
+
+      // Weekday row (day view only)
+      if (dayA > 0.01) {
+        ctx.font = "500 11px Inter, system-ui, sans-serif";
+        ctx.fillStyle = "rgba(255,255,255,0.65)";
+        ctx.globalAlpha = dayA;
+        WEEK.forEach((w, c) => ctx.fillText(w, PAD + c * CELL_W + CELL_W / 2, HEAD_H + WD_H / 2));
+      }
+
+      ctx.save();
+      ctx.translate(S.slide, 0);
+      if (dayA > 0.01) {
+        drawPill(S.indDay, 34, 30, dayA);
+        drawDays(dayA, o);
+      }
+      if (yearA > 0.01) {
+        drawPill(S.indYear, 68, 32, yearA);
+        drawYears(yearA, o);
+      }
+      ctx.restore();
+    }
+
+    function loop() {
+      S.open += (S.openTarget - S.open) * 0.18;
+      S.mix += (S.mixTarget - S.mix) * 0.15;
+      S.slide += (0 - S.slide) * 0.2;
+      S.pulse *= 0.9;
+      draw();
+      if (S.openTarget === 0 && S.open < 0.01) {
+        S.open = 0; ctx.clearRect(0, 0, CW, CH); S.running = false; return;
+      }
+      requestAnimationFrame(loop);
+    }
+
+    function ensureLoop() {
+      if (!S.running) { S.running = true; requestAnimationFrame(loop); }
+    }
+
+    function setView(v) {
+      S.view = v;
+      S.mixTarget = v === "years" ? 1 : 0;
+      S.hoverYear = -1;
+      ensureLoop();
+    }
+
+    function toggleView() {
+      if (S.view === "days") { S.yearStart = S.year - 5; setView("years"); }
+      else setView("days");
+    }
+
+    function openCal() {
+      pop.classList.add("show");
+      const r = dobInput.getBoundingClientRect();
+      const pw = pop.offsetWidth, ph = pop.offsetHeight;
+      let left = Math.max(8, Math.min(window.innerWidth - pw - 8, r.left + r.width / 2 - pw / 2));
+      let top = r.bottom + 10;
+      if (top + ph > window.innerHeight - 8) top = Math.max(8, r.top - ph - 10);
+      pop.style.left = left + "px"; pop.style.top = top + "px";
+      if (S.sel) { S.year = S.sel.y; S.month = S.sel.m; }
+      S.view = "days"; S.mixTarget = 0;
+      S.openTarget = 1;
+      ensureLoop();
+    }
+
+    function closeCal() {
+      if (S.openTarget === 0) return;
+      S.openTarget = 0;
+      pop.classList.remove("show");
+      ensureLoop();
+    }
+
+    function changeMonth(dir) {
+      S.month += dir;
+      if (S.month < 0) { S.month = 11; S.year--; }
+      if (S.month > 11) { S.month = 0; S.year++; }
+      S.slide = dir * 40;
+      ensureLoop();
+    }
+
+    function step(dir) {
+      if (S.view === "years") S.yearStart += dir * 12;
+      else changeMonth(dir);
+      ensureLoop();
+    }
+
+    function selectDay(d) {
+      S.sel = { y: S.year, m: S.month, d };
+      S.pulse = 1;
+      dobInput.value = pad2(d) + "/" + pad2(S.month + 1) + "/" + S.year;
+      ensureLoop();
+      setTimeout(closeCal, 420);
+    }
+
+    cvs.addEventListener("pointermove", e => {
+      const r = cvs.getBoundingClientRect();
+      const x = e.clientX - r.left, y = e.clientY - r.top;
+      if (S.view === "years") {
+        S.hoverYear = hitYear(x, y);
+        S.hover = -1;
+      } else {
+        S.hover = hitCell(x, y);
+        if (S.hover >= 0 && !dayAt(S.hover)) S.hover = -1;
+      }
+      S.hoverNav = y < HEAD_H ? (x < PAD + 40 ? -1 : x > CW - PAD - 40 ? 1 : 0) : 0;
+      const onTitle = y < HEAD_H && x >= PAD + 40 && x <= CW - PAD - 40;
+      const clickable = S.hover >= 0 || S.hoverYear >= 0 || S.hoverNav !== 0 || onTitle;
+      cvs.style.cursor = clickable ? "pointer" : "default";
+      ensureLoop();
+    });
+
+    cvs.addEventListener("pointerleave", () => {
+      S.hover = -1; S.hoverYear = -1; S.hoverNav = 0; ensureLoop();
+    });
+
+    cvs.addEventListener("click", e => {
+      const r = cvs.getBoundingClientRect();
+      const x = e.clientX - r.left, y = e.clientY - r.top;
+      if (y < HEAD_H) {
+        if (x < PAD + 40) step(-1);
+        else if (x > CW - PAD - 40) step(1);
+        else toggleView();
+        return;
+      }
+      if (S.view === "years") {
+        const i = hitYear(x, y);
+        if (i >= 0) { S.year = S.yearStart + i; S.slide = 0; setView("days"); }
+        return;
+      }
+      const i = hitCell(x, y);
+      const d = i >= 0 ? dayAt(i) : 0;
+      if (d) selectDay(d);
+    });
+
+    dobInput.addEventListener("click", e => { e.stopPropagation(); openCal(); });
+    document.addEventListener("pointerdown", e => {
+      if (!pop.contains(e.target) && e.target !== dobInput) closeCal();
+    });
+    document.addEventListener("keydown", e => { if (e.key === "Escape") closeCal(); });
+  })();
+  </script>
+  <div class="tp-overlay" id="tpOverlay">
+    <div class="tp-card" id="tpCard">
+      <h3>Time of birth</h3>
+      <div class="tp-display">
+        <div class="flap-cell" data-v="-"><div class="half top"><span>-</span></div><div class="half bottom"><span>-</span></div></div>
+        <div class="flap-cell" data-v="-"><div class="half top"><span>-</span></div><div class="half bottom"><span>-</span></div></div>
+        <div class="tp-colon">:</div>
+        <div class="flap-cell" data-v="-"><div class="half top"><span>-</span></div><div class="half bottom"><span>-</span></div></div>
+        <div class="flap-cell" data-v="-"><div class="half top"><span>-</span></div><div class="half bottom"><span>-</span></div></div>
+        <div class="tp-period">
+          <button type="button" class="per on" data-period="AM">AM</button>
+          <button type="button" class="per" data-period="PM">PM</button>
+        </div>
+      </div>
+      <p class="tp-status" id="tpStatus">Type 4 digits, e.g. 0930</p>
+      <div class="tp-pad">
+        <button type="button" data-key="1">1</button>
+        <button type="button" data-key="2">2</button>
+        <button type="button" data-key="3">3</button>
+        <button type="button" data-key="4">4</button>
+        <button type="button" data-key="5">5</button>
+        <button type="button" data-key="6">6</button>
+        <button type="button" data-key="7">7</button>
+        <button type="button" data-key="8">8</button>
+        <button type="button" data-key="9">9</button>
+        <button type="button" class="act" data-key="back">⌫</button>
+        <button type="button" data-key="0">0</button>
+        <button type="button" class="act" data-key="done">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (() => {
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const tobInput = document.querySelector('input[name="tob"]');
+    const overlay = document.getElementById("tpOverlay");
+    const card = document.getElementById("tpCard");
+    const statusEl = document.getElementById("tpStatus");
+    const cells = [...overlay.querySelectorAll(".flap-cell")];
+    const periodBtns = [...overlay.querySelectorAll(".per")];
+    let digits = ["-", "-", "-", "-"];
+    let period = "AM";
+    let audioCtx = null;
+
+    // Browsers only allow sound after a user action, so this runs on every interaction
+    function ensureAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+    }
+
+    // Mechanical key click: a short filtered noise burst plus a quick thump
+    function playClick() {
+      if (!audioCtx) return;
+      const t = audioCtx.currentTime;
+      const len = Math.floor(audioCtx.sampleRate * 0.025);
+      const buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 5);
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buf;
+      const hp = audioCtx.createBiquadFilter();
+      hp.type = "highpass";
+      hp.frequency.value = 1500;
+      const ng = audioCtx.createGain();
+      ng.gain.setValueAtTime(0.6, t);
+      noise.connect(hp); hp.connect(ng); ng.connect(audioCtx.destination);
+      noise.start(t);
+
+      const osc = audioCtx.createOscillator();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(950, t);
+      osc.frequency.exponentialRampToValueAtTime(240, t + 0.035);
+      const og = audioCtx.createGain();
+      og.gain.setValueAtTime(0.35, t);
+      og.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+      osc.connect(og); og.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + 0.07);
+    }
+
+    function makeFlap(pos, ch) {
+      const f = document.createElement("div");
+      f.className = "flap " + pos;
+      const s = document.createElement("span");
+      s.textContent = ch;
+      f.append(s);
+      return f;
+    }
+
+    // Split-flap: the top half folds down, then the new bottom half falls into place
+    function setCell(cell, ch, animate = true) {
+      const cur = cell.dataset.v;
+      if (cur === ch) return;
+      cell.dataset.v = ch;
+      const topSpan = cell.querySelector(".half.top span");
+      const botSpan = cell.querySelector(".half.bottom span");
+      if (!animate || reduced) {
+        topSpan.textContent = ch;
+        botSpan.textContent = ch;
+        return;
+      }
+      const flapTop = makeFlap("top", cur);
+      const flapBottom = makeFlap("bottom", ch);
+      flapBottom.style.transform = "rotateX(90deg)";
+      cell.append(flapTop, flapBottom);
+      flapTop.animate([{ transform: "rotateX(0deg)" }, { transform: "rotateX(-90deg)" }],
+        { duration: 140, easing: "ease-in", fill: "forwards" }).finished
+        .then(() => {
+          topSpan.textContent = ch;
+          flapTop.remove();
+          return flapBottom.animate([{ transform: "rotateX(90deg)" }, { transform: "rotateX(0deg)" }],
+            { duration: 170, easing: "cubic-bezier(.2,.8,.2,1)", fill: "forwards" }).finished;
+        })
+        .then(() => {
+          botSpan.textContent = ch;
+          flapBottom.remove();
+        })
+        .catch(() => {});
+    }
+
+    function render(animate = true) {
+      cells.forEach((c, i) => setCell(c, digits[i], animate));
+    }
+
+    const isComplete = () => digits.every(d => d !== "-");
+
+    function setStatus(text, kind = "") {
+      statusEl.textContent = text;
+      statusEl.className = "tp-status " + kind;
+    }
+
+    function shake() {
+      if (reduced) return;
+      card.animate([
+        { transform: "translateX(0)" }, { transform: "translateX(-9px)" },
+        { transform: "translateX(9px)" }, { transform: "translateX(0)" }
+      ], { duration: 320 });
+    }
+
+    function commit() {
+      const h = parseInt(digits[0] + digits[1], 10);
+      const m = parseInt(digits[2] + digits[3], 10);
+      if (h < 1 || h > 12 || m > 59) {
+        tobInput.value = "";
+        setStatus("Hour must be 01-12 and minute 00-59", "bad");
+        shake();
+        setTimeout(() => { digits = ["-", "-", "-", "-"]; render(); }, 600);
+        return false;
+      }
+      tobInput.value = `${digits[0]}${digits[1]}:${digits[2]}${digits[3]} ${period}`;
+      setStatus("Set. Tap Done or press Enter.", "good");
+      return true;
+    }
+
+    function setPeriod(p) {
+      period = p;
+      periodBtns.forEach(b => b.classList.toggle("on", b.dataset.period === p));
+      if (isComplete()) commit();
+    }
+
+    function pushDigit(d) {
+      const idx = digits.indexOf("-");
+      if (idx < 0) return;
+      ensureAudio();
+      playClick();
+      digits[idx] = d;
+      render();
+      if (isComplete()) {
+        commit();
+      } else {
+        tobInput.value = "";
+        setStatus((4 - digits.filter(x => x !== "-").length) + " digit(s) left");
+      }
+    }
+
+    function popDigit() {
+      let idx = -1;
+      digits.forEach((d, i) => { if (d !== "-") idx = i; });
+      if (idx < 0) return;
+      ensureAudio();
+      playClick();
+      digits[idx] = "-";
+      render();
+      tobInput.value = "";
+      setStatus("Type 4 digits, e.g. 0930");
+    }
+
+    function finish() {
+      if (!isComplete()) {
+        setStatus("Type all 4 digits first", "bad");
+        shake();
+        return;
+      }
+      if (commit()) closeTime();
+    }
+
+    function handleKey(k) {
+      if (k === "back") popDigit();
+      else if (k === "done") finish();
+      else pushDigit(k);
+    }
+
+    function openTime() {
+      ensureAudio();
+      const m = tobInput.value.match(/^(\d)(\d):(\d)(\d) (AM|PM)$/);
+      if (m) {
+        digits = [m[1], m[2], m[3], m[4]];
+        period = m[5];
+      } else {
+        digits = ["-", "-", "-", "-"];
+        period = "AM";
+      }
+      periodBtns.forEach(b => b.classList.toggle("on", b.dataset.period === period));
+      render(false);
+      if (isComplete()) setStatus("Set. Tap Done or press Enter.", "good");
+      else setStatus("Type 4 digits, e.g. 0930");
+      overlay.classList.add("show");
+    }
+
+    function closeTime() {
+      overlay.classList.remove("show");
+    }
+
+    tobInput.addEventListener("click", e => { e.stopPropagation(); openTime(); });
+    overlay.addEventListener("pointerdown", e => { if (e.target === overlay) closeTime(); });
+    overlay.querySelectorAll(".tp-pad button").forEach(b =>
+      b.addEventListener("click", () => handleKey(b.dataset.key)));
+    periodBtns.forEach(b =>
+      b.addEventListener("click", () => { ensureAudio(); setPeriod(b.dataset.period); }));
+
+    document.addEventListener("keydown", e => {
+      if (!overlay.classList.contains("show")) return;
+      if (/^\d$/.test(e.key)) { e.preventDefault(); handleKey(e.key); }
+      else if (e.key === "Backspace") { e.preventDefault(); handleKey("back"); }
+      else if (e.key === "Enter") { e.preventDefault(); handleKey("done"); }
+      else if (e.key === "Escape") closeTime();
+      else if (/^a$/i.test(e.key)) setPeriod("AM");
+      else if (/^p$/i.test(e.key)) setPeriod("PM");
+    });
+  })();
+  </script>
+  <script>
+  (() => {
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFxGNPBwDeji84Y2S75U7JhRcyhsboEC8vDM7IOxN1KP0CFk-XV55r1lV9VFOK-qoa/exec";
+    const form = document.getElementById("birthForm");
+    const formMessage = document.getElementById("formMessage");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      const submitButton = form.querySelector('button[type="submit"]');
+      const registrationData = {
+        fullName: document.getElementById("fullName").value.trim(),
+        contactNumber: document.getElementById("contactNumber").value.trim(),
+        dateOfBirth: document.getElementById("dateOfBirth").value,
+        timeOfBirth: document.getElementById("timeOfBirth").value,
+        placeOfBirth: document.getElementById("placeOfBirth").value.trim()
+      };
+
+      submitButton.disabled = true;
+      submitButton.textContent = "Submitting...";
+      formMessage.textContent = "";
+
+      try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(registrationData)
         });
-        for (var y = MAX_YEAR; y >= MIN_YEAR; y--) {
-            yearSel.add(new Option(y, y));
-        }
-
-        function pad(n) { return (n < 10 ? "0" : "") + n; }
-
-        function parseValue(v) {
-            var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || "");
-            return m ? { y: +m[1], m: +m[2] - 1, d: +m[3] } : null;
-        }
-
-        function setView(y, m) {
-            if (y < MIN_YEAR) y = MIN_YEAR;
-            if (y > MAX_YEAR) y = MAX_YEAR;
-            if (m < 0) { m = 11; y--; }
-            if (m > 11) { m = 0; y++; }
-            if (y < MIN_YEAR) { y = MIN_YEAR; m = 0; }
-            if (y > MAX_YEAR) { y = MAX_YEAR; m = 11; }
-            viewYear = y;
-            viewMonth = m;
-            monthSel.value = String(m);
-            yearSel.value = String(y);
-            render();
-        }
-
-        function render() {
-            daysBox.innerHTML = "";
-            var selected = parseValue(input.value);
-            var firstDay = new Date(viewYear, viewMonth, 1).getDay();
-            var total = new Date(viewYear, viewMonth + 1, 0).getDate();
-
-            for (var e = 0; e < firstDay; e++) {
-                var empty = document.createElement("div");
-                empty.className = "calendar-day empty";
-                daysBox.appendChild(empty);
-            }
-
-            for (var d = 1; d <= total; d++) {
-                var btn = document.createElement("button");
-                btn.type = "button";
-                btn.className = "calendar-day";
-                btn.textContent = d;
-
-                if (viewYear === today.getFullYear() && viewMonth === today.getMonth() && d === today.getDate()) {
-                    btn.classList.add("today");
-                }
-                if (selected && selected.y === viewYear && selected.m === viewMonth && selected.d === d) {
-                    btn.classList.add("selected");
-                }
-
-                (function (day) {
-                    btn.addEventListener("click", function () {
-                        input.value = viewYear + "-" + pad(viewMonth + 1) + "-" + pad(day);
-                        popup.hidden = true;
-                        input.dispatchEvent(new Event("change", { bubbles: true }));
-                    });
-                })(d);
-
-                daysBox.appendChild(btn);
-            }
-        }
-
-        function openCalendar() {
-            var p = parseValue(input.value);
-            if (p) {
-                setView(p.y, p.m);
-            } else {
-                setView(viewYear, viewMonth);
-            }
-            popup.hidden = false;
-        }
-
-        input.addEventListener("click", openCalendar);
-        input.addEventListener("keydown", function (e) {
-            if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                openCalendar();
-            } else if (e.key !== "Tab" && e.key !== "Escape") {
-                e.preventDefault();
-            }
-        });
-        input.addEventListener("beforeinput", function (e) { e.preventDefault(); });
-
-        prevBtn.addEventListener("click", function () { setView(viewYear, viewMonth - 1); });
-        nextBtn.addEventListener("click", function () { setView(viewYear, viewMonth + 1); });
-        monthSel.addEventListener("change", function () { setView(viewYear, +monthSel.value); });
-        yearSel.addEventListener("change", function () { setView(+yearSel.value, viewMonth); });
-
-        document.addEventListener("click", function (e) {
-            if (!popup.hidden && !popup.contains(e.target) && e.target !== input) {
-                popup.hidden = true;
-            }
-        });
-
-        document.addEventListener("keydown", function (e) {
-            if (e.key === "Escape") popup.hidden = true;
-        });
-    })();
-    </script>
-
-    <script>
-    /* ==========================================================
-       TIME OF BIRTH CLOCK: drag the hands to set the time.
-       Outer ring moves the minute hand, inner ring moves the hour hand.
-       Stores the value as HH:MM (24-hour) in #timeOfBirth.
-       The clock card and the popup sky follow the time:
-       sunrise 06:00, sunset 18:00.
-       ========================================================== */
-    (function () {
-        "use strict";
-
-        var NS = "http://www.w3.org/2000/svg";
-        var input = document.getElementById("timeOfBirth");
-        var popup = document.getElementById("timePopup");
-        var face = document.getElementById("tpFace");
-        var marks = document.getElementById("tpMarks");
-        var hourHand = document.getElementById("tpHourHand");
-        var minuteHand = document.getElementById("tpMinuteHand");
-        var hourSel = document.getElementById("tpHour");
-        var minSel = document.getElementById("tpMinute");
-        var amBtn = document.getElementById("tpAM");
-        var pmBtn = document.getElementById("tpPM");
-        var readout = document.getElementById("tpReadout");
-        var clearBtn = document.getElementById("tpClear");
-        var doneBtn = document.getElementById("tpDone");
-        if (!input || !popup || !face) return;
-
-        // Clock card (small sky widget under the field)
-        var card = document.getElementById("timeSkyWidget");
-        var cardSun = card ? card.querySelector(".sky-sun") : null;
-        var cardMoon = card ? card.querySelector(".sky-moon") : null;
-        var cardStars = card ? card.querySelector(".sky-stars") : null;
-        var cardHorizon = card ? card.querySelector(".sky-horizon") : null;
-        var cardHour = document.getElementById("hourHand");
-        var cardMinute = document.getElementById("minuteHand");
-
-        // Sky strip inside the popup
-        var tpSky = document.getElementById("tpSky");
-        var tpSun = document.getElementById("tpSun");
-        var tpMoon = document.getElementById("tpMoon");
-        var tpStars = document.getElementById("tpStars");
-        var tpHorizon = document.getElementById("tpHorizon");
-
-        // Fixed daylight times (minutes after midnight)
-        var SUNRISE = 360;   // 06:00
-        var SUNSET = 1080;   // 18:00
-
-        // Sky colour keyframes through the day: [minute, top colour, bottom colour]
-        var SKY_KEYS = [
-            [0,    "#070b17", "#141a3a"],
-            [330,  "#1b1d45", "#5a3a5e"],
-            [360,  "#3b4f86", "#f08a4b"],
-            [420,  "#5b8fd0", "#f7c58a"],
-            [720,  "#4a90d9", "#bfe3f5"],
-            [1020, "#3b6fa8", "#f5b26b"],
-            [1080, "#4a2c6e", "#e0653a"],
-            [1140, "#1a1640", "#3b2050"],
-            [1260, "#0f1830", "#1a1640"],
-            [1440, "#070b17", "#141a3a"]
-        ];
-
-        var state = { h12: 12, m: 0, pm: false, set: false };
-        var drag = null;
-
-        function pad(n) { return (n < 10 ? "0" : "") + n; }
-
-        function svgEl(tag, attrs) {
-            var el = document.createElementNS(NS, tag);
-            for (var k in attrs) el.setAttribute(k, attrs[k]);
-            return el;
-        }
-
-        // Point on the dial, 0 degrees at 12 o'clock, clockwise
-        function pt(r, deg) {
-            var a = deg * Math.PI / 180;
-            return [100 + r * Math.sin(a), 100 - r * Math.cos(a)];
-        }
-
-        // Build tick marks and numbers once
-        for (var i = 0; i < 60; i++) {
-            var major = i % 5 === 0;
-            var p1 = pt(major ? 84 : 89, i * 6);
-            var p2 = pt(94, i * 6);
-            marks.appendChild(svgEl("line", {
-                x1: p1[0], y1: p1[1], x2: p2[0], y2: p2[1],
-                stroke: "#b58a36", "stroke-width": major ? 2 : 1
-            }));
-        }
-        for (var n = 1; n <= 12; n++) {
-            var q = pt(72, n * 30);
-            var label = svgEl("text", { x: q[0], y: q[1], "class": "tp-num" });
-            label.textContent = n;
-            marks.appendChild(label);
-        }
-
-        // Fill the hour and minute dropdowns
-        for (var h = 1; h <= 12; h++) hourSel.add(new Option(h, h));
-        for (var mi = 0; mi < 60; mi++) minSel.add(new Option(pad(mi), mi));
-
-        /* ---------- Sky helpers ---------- */
-        function hexRgb(hex) {
-            var v = parseInt(hex.slice(1), 16);
-            return [(v >> 16) & 255, (v >> 8) & 255, v & 255];
-        }
-
-        function mixHex(h1, h2, t) {
-            var c1 = hexRgb(h1), c2 = hexRgb(h2);
-            return "rgb(" + [0, 1, 2].map(function (i) {
-                return Math.round(c1[i] + (c2[i] - c1[i]) * t);
-            }).join(",") + ")";
-        }
-
-        // Sky colours for a given minute of the day
-        function skyAt(m) {
-            for (var i = 0; i < SKY_KEYS.length - 1; i++) {
-                var a = SKY_KEYS[i], b = SKY_KEYS[i + 1];
-                if (m <= b[0]) {
-                    var t = (m - a[0]) / (b[0] - a[0]);
-                    return [mixHex(a[1], b[1], t), mixHex(a[2], b[2], t)];
-                }
-            }
-            return [SKY_KEYS[0][1], SKY_KEYS[0][2]];
-        }
-
-        function smooth(a, b, x) {
-            var t = Math.min(1, Math.max(0, (x - a) / (b - a)));
-            return t * t * (3 - 2 * t);
-        }
-
-        // 0 at night, 1 in full daylight, fading across sunrise and sunset
-        function dayFactor(m) {
-            return smooth(SUNRISE - 30, SUNRISE + 30, m) * (1 - smooth(SUNSET - 30, SUNSET + 30, m));
-        }
-
-        // Warm glow along the horizon around sunrise and sunset
-        function horizonGlow(m) {
-            var dawn = smooth(SUNRISE - 60, SUNRISE, m) * (1 - smooth(SUNRISE, SUNRISE + 60, m));
-            var dusk = smooth(SUNSET - 60, SUNSET, m) * (1 - smooth(SUNSET, SUNSET + 60, m));
-            return Math.max(dawn, dusk);
-        }
-
-        function minutesOfDay() {
-            var h24 = (state.h12 % 12) + (state.pm ? 12 : 0);
-            return h24 * 60 + state.m;
-        }
-
-        // Paint a sky (card or popup) for minute m: sun and moon on a fixed arc
-        function paintSky(root, sunEl, moonEl, starsEl, horizonEl, m) {
-            var sky = skyAt(m);
-            var df = dayFactor(m);
-            var tSun = (m - SUNRISE) / (SUNSET - SUNRISE);
-            var tMoon = ((m - SUNSET + 1440) % 1440) / (1440 - (SUNSET - SUNRISE));
-
-            root.style.background = "linear-gradient(135deg, " + sky[0] + ", " + sky[1] + ")";
-
-            if (sunEl) {
-                sunEl.style.left = (8 + 84 * tSun) + "%";
-                sunEl.style.top = (88 - Math.sin(Math.PI * tSun) * 74) + "%";
-                sunEl.style.transform = "translate(-50%, -50%)";
-                sunEl.style.opacity = df;
-            }
-            if (moonEl) {
-                moonEl.style.left = (8 + 84 * tMoon) + "%";
-                moonEl.style.top = (88 - Math.sin(Math.PI * tMoon) * 74) + "%";
-                moonEl.style.transform = "translate(-50%, -50%)";
-                moonEl.style.opacity = 1 - df;
-            }
-            if (starsEl) starsEl.style.opacity = 1 - df;
-            if (horizonEl) {
-                horizonEl.style.background = "rgba(255, 170, 90, " + (0.2 + 0.5 * horizonGlow(m)) + ")";
-            }
-        }
-
-        // Neutral look when no time is set
-        function neutralSky(root, sunEl, moonEl, starsEl, horizonEl) {
-            root.style.background = "";
-            [sunEl, moonEl, starsEl].forEach(function (el) {
-                if (el) el.style.opacity = 0;
-            });
-            if (horizonEl) horizonEl.style.background = "";
-        }
-
-        // Clock card: sky and hands
-        function updateCard() {
-            if (!card) return;
-
-            if (!state.set) {
-                card.className = "time-sky-widget sky-neutral ambient-clock-container";
-                neutralSky(card, cardSun, cardMoon, cardStars, cardHorizon);
-                if (cardHour) cardHour.style.transform = "translateX(-50%) rotate(0deg)";
-                if (cardMinute) cardMinute.style.transform = "translateX(-50%) rotate(0deg)";
-                return;
-            }
-
-            card.className = "time-sky-widget ambient-clock-container";
-            paintSky(card, cardSun, cardMoon, cardStars, cardHorizon, minutesOfDay());
-
-            var hourDeg = (state.h12 % 12) * 30 + state.m * 0.5;
-            var minDeg = state.m * 6;
-            if (cardHour) cardHour.style.transform = "translateX(-50%) rotate(" + hourDeg + "deg)";
-            if (cardMinute) cardMinute.style.transform = "translateX(-50%) rotate(" + minDeg + "deg)";
-        }
-
-        // Popup sky strip
-        function updatePopupSky() {
-            if (!tpSky) return;
-            if (!state.set) {
-                neutralSky(tpSky, tpSun, tpMoon, tpStars, tpHorizon);
-            } else {
-                paintSky(tpSky, tpSun, tpMoon, tpStars, tpHorizon, minutesOfDay());
-            }
-        }
-
-        /* ---------- Popup logic ---------- */
-        function parseValue(v) {
-            var m = /^(\d{2}):(\d{2})$/.exec(v || "");
-            if (!m) return null;
-            var h24 = +m[1];
-            return { h12: (h24 % 12) || 12, m: +m[2], pm: h24 >= 12 };
-        }
-
-        function render() {
-            var hourDeg = (state.h12 % 12) * 30 + state.m * 0.5;
-            var minDeg = state.m * 6;
-            hourHand.setAttribute("transform", "rotate(" + hourDeg + " 100 100)");
-            minuteHand.setAttribute("transform", "rotate(" + minDeg + " 100 100)");
-
-            hourSel.value = String(state.h12);
-            minSel.value = String(state.m);
-            amBtn.setAttribute("aria-pressed", String(!state.pm));
-            pmBtn.setAttribute("aria-pressed", String(state.pm));
-            readout.textContent = state.set
-                ? pad(state.h12) + ":" + pad(state.m) + " " + (state.pm ? "PM" : "AM")
-                : "--:-- --";
-
-            updatePopupSky();
-            updateCard();
-        }
-
-        // Write HH:MM into the field and tell the rest of the page it changed
-        function commit() {
-            input.value = state.set
-                ? pad((state.h12 % 12) + (state.pm ? 12 : 0)) + ":" + pad(state.m)
-                : "";
-            input.dispatchEvent(new Event("input", { bubbles: true }));
-            input.dispatchEvent(new Event("change", { bubbles: true }));
-            render();
-        }
-
-        function openPopup() {
-            var p = parseValue(input.value);
-            if (p) {
-                state.h12 = p.h12;
-                state.m = p.m;
-                state.pm = p.pm;
-                state.set = true;
-            } else {
-                state.h12 = 12;
-                state.m = 0;
-                state.pm = false;
-                state.set = false;
-            }
-            render();
-            popup.hidden = false;
-        }
-
-        // Angle and distance of the pointer from the centre of the dial
-        function pointerInfo(e) {
-            var r = face.getBoundingClientRect();
-            var dx = e.clientX - (r.left + r.width / 2);
-            var dy = e.clientY - (r.top + r.height / 2);
-            var deg = Math.atan2(dx, -dy) * 180 / Math.PI;
-            if (deg < 0) deg += 360;
-            return { deg: deg, dist: Math.hypot(dx, dy) / (r.width / 2) };
-        }
-
-        function applyPointer(e) {
-            var info = pointerInfo(e);
-            if (drag === "minute") {
-                state.m = Math.round(info.deg / 6) % 60;
-            } else {
-                state.h12 = (Math.round(info.deg / 30) % 12) || 12;
-            }
-            state.set = true;
-            commit();
-        }
-
-        face.addEventListener("pointerdown", function (e) {
-            e.preventDefault();
-            drag = pointerInfo(e).dist > 0.66 ? "minute" : "hour";
-            face.setPointerCapture(e.pointerId);
-            applyPointer(e);
-        });
-        face.addEventListener("pointermove", function (e) {
-            if (drag) applyPointer(e);
-        });
-        function endDrag() { drag = null; }
-        face.addEventListener("pointerup", endDrag);
-        face.addEventListener("pointercancel", endDrag);
-
-        hourSel.addEventListener("change", function () {
-            state.h12 = +hourSel.value;
-            state.set = true;
-            commit();
-        });
-        minSel.addEventListener("change", function () {
-            state.m = +minSel.value;
-            state.set = true;
-            commit();
-        });
-        amBtn.addEventListener("click", function () {
-            state.pm = false;
-            state.set = true;
-            commit();
-        });
-        pmBtn.addEventListener("click", function () {
-            state.pm = true;
-            state.set = true;
-            commit();
-        });
-        clearBtn.addEventListener("click", function () {
-            state.set = false;
-            state.h12 = 12;
-            state.m = 0;
-            state.pm = false;
-            commit();
-        });
-        doneBtn.addEventListener("click", function () {
-            popup.hidden = true;
-            input.focus();
-        });
-
-        input.addEventListener("click", openPopup);
-        input.addEventListener("keydown", function (e) {
-            if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                openPopup();
-            } else if (e.key !== "Tab" && e.key !== "Escape") {
-                e.preventDefault();
-            }
-        });
-        input.addEventListener("beforeinput", function (e) { e.preventDefault(); });
-
-        document.addEventListener("click", function (e) {
-            if (!popup.hidden && !popup.contains(e.target) && e.target !== input) {
-                popup.hidden = true;
-            }
-        });
-        document.addEventListener("keydown", function (e) {
-            if (e.key === "Escape") popup.hidden = true;
-        });
-
-        render();
-    })();
-    </script>
-
-    <script>
-    /* ==========================================================
-       COSMIC BACKGROUND: stars, nakshatras, Navagraha orbits,
-       asteroid belt and drifting rocks. Runs on #cosmicBg only.
-       ========================================================== */
-    (function () {
-        "use strict";
-
-        var canvas = document.getElementById("cosmicBg");
-        if (!canvas || !canvas.getContext) return;
-        var ctx = canvas.getContext("2d");
-        var TAU = Math.PI * 2;
-       
-        var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-        /* ---------- Tuning ---------- */
-        var SKY_PERIOD_MS = 600000;   // full sky rotation: 10 minutes (slow and silent)
-        var NODE_PERIOD_MS = 1080000; // Rahu/Ketu slow backward drift: 18 minutes per loop
-        var TILT = -0.2;              // tilt of the orbital plane
-        var FLAT = 0.5;               // orbit flatness (1 = perfect circle)
-        var BELT_R0 = 190;            // asteroid belt inner radius
-        var BELT_W = TAU / 150000;    // belt angular speed at BELT_R0
-
-        /* ---------- Data ---------- */
-        // 27 nakshatras plus Abhijit (drawn as the 28th slot). Special ones are highlighted.
-        var NAKSHATRAS = [
-            { en: "Ashwini", hi: "अश्विनी", special: true },
-            { en: "Bharani", hi: "भरणी" },
-            { en: "Krittika", hi: "कृत्तिका" },
-            { en: "Rohini", hi: "रोहिणी", special: true },
-            { en: "Mrigashira", hi: "मृगशिरा" },
-            { en: "Ardra", hi: "आर्द्रा", special: true },
-            { en: "Punarvasu", hi: "पुनर्वसु" },
-            { en: "Pushya", hi: "पुष्य", special: true },
-            { en: "Ashlesha", hi: "आश्लेषा" },
-            { en: "Magha", hi: "मघा" },
-            { en: "Purva Phalguni", hi: "पूर्व फाल्गुनी" },
-            { en: "Uttara Phalguni", hi: "उत्तर फाल्गुनी" },
-            { en: "Hasta", hi: "हस्त" },
-            { en: "Chitra", hi: "चित्रा", special: true },
-            { en: "Swati", hi: "स्वाति" },
-            { en: "Vishakha", hi: "विशाखा" },
-            { en: "Anuradha", hi: "अनुराधा" },
-            { en: "Jyeshtha", hi: "ज्येष्ठा" },
-            { en: "Mula", hi: "मूल" },
-            { en: "Purva Ashadha", hi: "पूर्वाषाढ़ा" },
-            { en: "Uttara Ashadha", hi: "उत्तराषाढ़ा" },
-            { en: "Abhijit", hi: "अभिजित", special: true },
-            { en: "Shravana", hi: "श्रवण" },
-            { en: "Dhanishta", hi: "धनिष्ठा" },
-            { en: "Shatabhisha", hi: "शतभिषा" },
-            { en: "Purva Bhadrapada", hi: "पूर्वाभाद्रपद" },
-            { en: "Uttara Bhadrapada", hi: "उत्तराभाद्रपद" },
-            { en: "Revati", hi: "रेवती" }
-        ];
-
-        // Moon orbits Earth; drawn on a small loop around the Sun (stylised).
-        // period is in seconds per full loop. Orbit radii are compact so the system fits the left column.
-        var BODIES = [
-            { id: "moon",    en: "Moon",    hi: "चंद्र",  orbit: 62,  period: 34,  color: "#e9eef7", size: 4.5 },
-            { id: "mercury", en: "Mercury", hi: "बुध",    orbit: 96,  period: 48,  color: "#c2b9a6", size: 3.2 },
-            { id: "venus",   en: "Venus",   hi: "शुक्र",  orbit: 132, period: 72,  color: "#f4dba6", size: 4.2 },
-            { id: "mars",    en: "Mars",    hi: "मंगल",   orbit: 170, period: 110, color: "#d9663f", size: 3.6 },
-            { id: "jupiter", en: "Jupiter", hi: "गुरु",   orbit: 222, period: 190, color: "#dcb98c", size: 7 },
-            { id: "saturn",  en: "Saturn",  hi: "शनि",    orbit: 272, period: 280, color: "#e7d09a", size: 6, ring: true }
-        ];
-        var MOON_ORBIT = BODIES[0].orbit;
-
-        /* ---------- State ---------- */
-        var W = 0, H = 0, dpr = 1, S = 1, skyR = 1;
-        var homeX = 0;
-        var sunX = 0, sunY = 0;
-        var skyAngle = 0;
-        var stars = [], clusters = [], belt = [], drifters = [];
-        var bodies = [], nodes = [];
-        var hover = null;
-        var pointer = { x: 0, y: 0, valid: false };
-        var par = { x: 0, y: 0 };
-        var lastT = 0, rafId = 0, spawnTimer = 0;
-        var sprites = {};
-
-        /* ---------- Helpers ---------- */
-        function rng(seed) {
-            return function () {
-                seed |= 0;
-                seed = (seed + 0x6d2b79f5) | 0;
-                var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-                t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-                return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-            };
-        }
-
-        function hexToRgb(hex) {
-            var n = parseInt(hex.slice(1), 16);
-            return ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255);
-        }
-
-        function makeSprite(rgb, core) {
-            var c = document.createElement("canvas");
-            c.width = c.height = 64;
-            var g = c.getContext("2d");
-            var grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
-            grad.addColorStop(0, "rgba(" + rgb + "," + core + ")");
-            grad.addColorStop(0.25, "rgba(" + rgb + "," + (core * 0.45) + ")");
-            grad.addColorStop(1, "rgba(" + rgb + ",0)");
-            g.fillStyle = grad;
-            g.fillRect(0, 0, 64, 64);
-            return c;
-        }
-
-        function rockShape(r) {
-            var s = [];
-            for (var i = 0; i < 7; i++) s.push(0.75 + r() * 0.45);
-            return s;
-        }
-
-        function drawRock(x, y, size, rot, shape, alpha) {
-            ctx.beginPath();
-            for (var k = 0; k < shape.length; k++) {
-                var ang = rot + (k / shape.length) * TAU;
-                var rr = size * shape[k];
-                var px = x + Math.cos(ang) * rr;
-                var py = y + Math.sin(ang) * rr;
-                if (k) ctx.lineTo(px, py); else ctx.moveTo(px, py);
-            }
-            ctx.closePath();
-            ctx.fillStyle = "rgba(150,140,124," + alpha + ")";
-            ctx.fill();
-        }
-
-        // Point on a tilted orbit, in screen pixels
-        function orbitPoint(radius, a) {
-            var x = radius * Math.cos(a);
-            var y = radius * FLAT * Math.sin(a);
-            var ct = Math.cos(TILT), st = Math.sin(TILT);
-            return {
-                x: sunX + (x * ct - y * st) * S,
-                y: sunY + (x * st + y * ct) * S
-            };
-        }
-
-        // Sky-local coordinates to screen, after the sky's rotation
-        function toScreen(x, y, cosA, sinA) {
-            return [
-                sunX + (x * cosA - y * sinA) * skyR,
-                sunY + (x * sinA + y * cosA) * skyR
-            ];
-        }
-
-        function label(text, x, y, strong) {
-            ctx.save();
-            ctx.font = (strong ? "600 12px " : "11px ") + 'Georgia, "Noto Serif", serif';
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            var w = ctx.measureText(text).width;
-            if (strong) {
-                ctx.fillStyle = "rgba(7, 11, 23, 0.72)";
-                ctx.fillRect(x - w / 2 - 7, y - 10, w + 14, 20);
-                ctx.fillStyle = "#f3e2a8";
-            } else {
-                ctx.fillStyle = "rgba(241, 232, 208, 0.6)";
-            }
-            ctx.fillText(text, x, y);
-            ctx.restore();
-        }
-
-        /* ---------- Layout: where the solar system sits and how big it is ---------- */
-        function computeLayout() {
-            var intro = document.querySelector(".intro-section");
-            var room;
-            if (W >= 900 && intro) {
-                // Centre the solar system on the left column and size it to fit inside that column
-                var r = intro.getBoundingClientRect();
-                homeX = r.left + r.width / 2;
-                room = Math.min(homeX - r.left, r.right - homeX) - 16;
-            } else {
-                // Narrow screens: single column, system centred behind the page
-                homeX = W / 2;
-                room = W / 2 - 16;
-            }
-            S = Math.min(1.15, Math.max(0.5, Math.min(H / 820, room / 300)));
-        }
-
-        /* ---------- Build the scene ---------- */
-        function initBodies() {
-            var r = rng(20260915);
-            bodies = BODIES.map(function (b) {
-                return {
-                    id: b.id, en: b.en, hi: b.hi, orbit: b.orbit, color: b.color,
-                    size: b.size, ring: !!b.ring,
-                    w: TAU / (b.period * 1000),
-                    a: r() * TAU,
-                    px: 0, py: 0,
-                    sprite: makeSprite(hexToRgb(b.color), 0.9)
-                };
-            });
-            nodes = [
-                { id: "rahu", en: "Rahu", hi: "राहु", a: r() * TAU, px: 0, py: 0 },
-                { id: "ketu", en: "Ketu", hi: "केतु", a: 0, px: 0, py: 0 }
-            ];
-            nodes[1].a = nodes[0].a + Math.PI;
-            belt = [];
-            for (var i = 0; i < 16; i++) {
-                belt.push({
-                    r: BELT_R0 + r() * 22,
-                    a: r() * TAU,
-                    rot: r() * TAU,
-                    vr: (r() - 0.5) * 0.0015,
-                    size: 1.2 + r() * 1.8,
-                    shape: rockShape(r)
-                });
-            }
-        }
-
-        // Stars and nakshatras in sky-local space; regenerated on resize with the same seed
-        function generateSky() {
-            var r = rng(20260915);
-            var count = Math.min(340, Math.max(120, Math.floor((W * H) / 4200)));
-            stars = [];
-            for (var i = 0; i < count; i++) {
-                var rr = Math.sqrt(r()), th = r() * TAU, big = r() > 0.93;
-                stars.push({
-                    x: Math.cos(th) * rr,
-                    y: Math.sin(th) * rr,
-                    size: big ? 1.4 + r() * 1.2 : 0.4 + r() * 0.9,
-                    big: big,
-                    warm: r() > 0.6,
-                    ph: r() * TAU,
-                    tw: 0.6 + r() * 1.4,
-                    a: 0.3 + r() * 0.5
-                });
-            }
-            clusters = NAKSHATRAS.map(function (n, idx) {
-                var base = (idx / NAKSHATRAS.length) * TAU + (r() - 0.5) * 0.1;
-                var rad = 0.28 + 0.55 * r();
-                var ccx = Math.cos(base) * rad, ccy = Math.sin(base) * rad;
-                var k = 4 + Math.floor(r() * 2), pts = [];
-                for (var j = 0; j < k; j++) {
-                    pts.push({ x: ccx + (r() - 0.5) * 0.085, y: ccy + (r() - 0.5) * 0.085 });
-                }
-                return {
-                    en: n.en, hi: n.hi, special: !!n.special,
-                    cx: ccx, cy: ccy, pts: pts,
-                    sx: 0, sy: 0, scr: []
-                };
-            });
-        }
-
-        function spawnDrifter() {
-            var fromLeft = Math.random() < 0.5;
-            var sp = (0.03 + Math.random() * 0.03) * S;
-            drifters.push({
-                x: fromLeft ? -30 : W + 30,
-                y: Math.random() * H * 0.9,
-                vx: (fromLeft ? 1 : -1) * sp * (0.9 + Math.random() * 0.4),
-                vy: (Math.random() - 0.4) * sp * 0.5,
-                size: 1.6 + Math.random() * 2.2,
-                rot: Math.random() * TAU,
-                vr: (Math.random() - 0.5) * 0.004,
-                life: 0,
-                shape: rockShape(Math.random.bind(Math)),
-            });
-        }
-
-        /* ---------- Per-frame logic ---------- */
-        function update(dt) {
-            skyAngle += dt * (TAU / SKY_PERIOD_MS);
-
-            // gentle parallax toward the pointer (only when a pointer exists)
-            var tx = pointer.valid ? (pointer.x - W / 2) * 0.02 : 0;
-            var ty = pointer.valid ? (pointer.y - H / 2) * 0.02 : 0;
-            par.x += (tx - par.x) * 0.05;
-            par.y += (ty - par.y) * 0.05;
-            sunX = homeX + par.x;
-            sunY = H / 2 + par.y;
-
-            for (var i = 0; i < bodies.length; i++) bodies[i].a += dt * bodies[i].w;
-
-            nodes[0].a -= dt * (TAU / NODE_PERIOD_MS);
-            nodes[1].a = nodes[0].a + Math.PI;
-
-            for (var k = 0; k < belt.length; k++) {
-                var rk = belt[k];
-                rk.a += dt * BELT_W * Math.pow(BELT_R0 / rk.r, 1.5);
-                rk.rot += dt * rk.vr;
-            }
-
-            spawnTimer -= dt;
-            if (spawnTimer <= 0 && drifters.length < 3) {
-                spawnDrifter();
-                spawnTimer = 5000 + Math.random() * 4000;
-            }
-            for (var d = drifters.length - 1; d >= 0; d--) {
-                var dr = drifters[d];
-                dr.x += dr.vx * dt;
-                dr.y += dr.vy * dt;
-                dr.rot += dr.vr * dt;
-                dr.life += dt;
-                if (dr.x < -80 || dr.x > W + 80 || dr.y > H + 80) drifters.splice(d, 1);
-            }
-        }
-
-        function layout() {
-            var cosA = Math.cos(skyAngle), sinA = Math.sin(skyAngle);
-            clusters.forEach(function (c) {
-                var p = toScreen(c.cx, c.cy, cosA, sinA);
-                c.sx = p[0];
-                c.sy = p[1];
-                c.scr = c.pts.map(function (q) { return toScreen(q.x, q.y, cosA, sinA); });
-            });
-            bodies.forEach(function (b) {
-                var p = orbitPoint(b.orbit, b.a);
-                b.px = p.x;
-                b.py = p.y;
-            });
-            nodes.forEach(function (n) {
-                var p = orbitPoint(MOON_ORBIT, n.a);
-                n.px = p.x;
-                n.py = p.y;
-            });
-        }
-
-        function findHover() {
-            var best = null, bestD = Infinity;
-            function consider(kind, ref, x, y, radius) {
-                var d = Math.hypot(pointer.x - x, pointer.y - y);
-                if (d < radius && d < bestD) {
-                    bestD = d;
-                    best = { kind: kind, ref: ref };
-                }
-            }
-            if (pointer.valid) {
-                bodies.forEach(function (b) { consider("body", b, b.px, b.py, 14); });
-                nodes.forEach(function (n) { consider("node", n, n.px, n.py, 14); });
-                clusters.forEach(function (c) { consider("nak", c, c.sx, c.sy, 26); });
-            }
-            hover = best;
-        }
-
-        /* ---------- Drawing ---------- */
-        function drawStars(now) {
-            var cosA = Math.cos(skyAngle), sinA = Math.sin(skyAngle);
-            for (var i = 0; i < stars.length; i++) {
-                var s = stars[i];
-                var p = toScreen(s.x, s.y, cosA, sinA);
-                if (p[0] < -10 || p[0] > W + 10 || p[1] < -10 || p[1] > H + 10) continue;
-                var tw = 0.55 + 0.45 * Math.sin(now * 0.001 * s.tw + s.ph);
-                var alpha = s.a * tw;
-                ctx.globalAlpha = alpha;
-                if (s.big) {
-                    var d = s.size * 9;
-                    ctx.drawImage(s.warm ? sprites.gold : sprites.cool, p[0] - d / 2, p[1] - d / 2, d, d);
-                }
-                ctx.fillStyle = s.warm ? "#f0dca2" : "#eef2fb";
-                ctx.beginPath();
-                ctx.arc(p[0], p[1], s.size, 0, TAU);
-                ctx.fill();
-            }
-            ctx.globalAlpha = 1;
-        }
-
-        function drawClusters() {
-            var hov = hover && hover.kind === "nak" ? hover.ref : null;
-            clusters.forEach(function (c) {
-                var isHov = c === hov;
-                if (c.special) {
-                    ctx.strokeStyle = "rgba(212, 178, 92, 0.55)";
-                    ctx.lineWidth = 1.1;
-                } else if (isHov) {
-                    ctx.strokeStyle = "rgba(200, 215, 240, 0.5)";
-                    ctx.lineWidth = 0.9;
-                } else {
-                    ctx.strokeStyle = "rgba(170, 190, 225, 0.12)";
-                    ctx.lineWidth = 0.7;
-                }
-                ctx.beginPath();
-                c.scr.forEach(function (p, j) {
-                    if (j) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]);
-                });
-                ctx.stroke();
-
-                c.scr.forEach(function (p) {
-                    ctx.fillStyle = c.special ? "#f3d98a" : "rgba(223, 231, 247, 0.7)";
-                    ctx.beginPath();
-                    ctx.arc(p[0], p[1], (c.special ? 1.9 : 1.2) * S, 0, TAU);
-                    ctx.fill();
-                });
-
-                if (c.special) {
-                    label(c.en + " · " + c.hi, c.sx, c.sy + 22 * S, true);
-                } else if (isHov) {
-                    label(c.en + " · " + c.hi, c.sx, c.sy - 18 * S, true);
-                }
-            });
-        }
-
-        function drawOrbits() {
-            var hovBody = hover && hover.kind === "body" ? hover.ref : null;
-            var hovNode = hover && hover.kind === "node";
-            bodies.forEach(function (b) {
-                var on = hovBody === b || (hovNode && b.id === "moon");
-                ctx.beginPath();
-                ctx.ellipse(sunX, sunY, b.orbit * S, b.orbit * S * FLAT, TILT, 0, TAU);
-                ctx.strokeStyle = on ? "rgba(212, 178, 92, 0.6)" : "rgba(212, 178, 92, 0.13)";
-                ctx.lineWidth = on ? 1.4 : 0.8;
-                ctx.stroke();
-            });
-        }
-
-        function drawBelt() {
-            belt.forEach(function (k) {
-                var p = orbitPoint(k.r, k.a);
-                drawRock(p.x, p.y, k.size * S, k.rot, k.shape, 0.5);
-            });
-        }
-
-        function drawDrifters() {
-            drifters.forEach(function (d) {
-                var alpha = 0.7 * Math.min(1, d.life / 600);
-                drawRock(d.x, d.y, d.size * S, d.rot, d.shape, alpha);
-            });
-        }
-
-        function drawSun() {
-            var g = 170 * S;
-            ctx.globalAlpha = 0.5;
-            ctx.drawImage(sprites.sun, sunX - g, sunY - g, g * 2, g * 2);
-            ctx.globalAlpha = 1;
-            ctx.fillStyle = "#ffd978";
-            ctx.beginPath();
-            ctx.arc(sunX, sunY, 15 * S, 0, TAU);
-            ctx.fill();
-            label("Surya · सूर्य", sunX, sunY + 30 * S, false);
-        }
-
-        function drawBodies() {
-            var hovBody = hover && hover.kind === "body" ? hover.ref : null;
-            bodies.forEach(function (b) {
-                var isHov = hovBody === b;
-                var s = b.size * S * (isHov ? 1.25 : 1);
-
-                ctx.globalAlpha = 0.5;
-                ctx.drawImage(b.sprite, b.px - s * 2.2, b.py - s * 2.2, s * 4.4, s * 4.4);
-                ctx.globalAlpha = 1;
-
-                ctx.fillStyle = b.color;
-                ctx.beginPath();
-                ctx.arc(b.px, b.py, s, 0, TAU);
-                ctx.fill();
-
-                if (b.ring) {
-                    ctx.strokeStyle = "rgba(231, 208, 154, 0.7)";
-                    ctx.lineWidth = 1.2;
-                    ctx.beginPath();
-                    ctx.ellipse(b.px, b.py, s * 2.1, s * 0.7, -0.35, 0, TAU);
-                    ctx.stroke();
-                }
-
-                if (isHov) {
-                    label(b.en + " · " + b.hi, b.px, b.py - s - 14, true);
-                } else {
-                    label(b.en, b.px, b.py - s - 10, false);
-                }
-            });
-        }
-
-        function drawNodes() {
-            var hovNode = hover && hover.kind === "node" ? hover.ref : null;
-            nodes.forEach(function (n) {
-                var isHov = hovNode === n;
-                var s = 5 * S * (isHov ? 1.3 : 1);
-                ctx.save();
-                ctx.translate(n.px, n.py);
-                ctx.rotate(Math.PI / 4);
-                ctx.strokeStyle = n.id === "rahu" ? "rgba(233, 238, 247, 0.85)" : "rgba(212, 178, 92, 0.9)";
-                ctx.lineWidth = 1.2;
-                ctx.strokeRect(-s, -s, s * 2, s * 2);
-                ctx.restore();
-
-                if (isHov) {
-                    label(n.en + " · " + n.hi, n.px, n.py - 14 * S, true);
-                } else {
-                    label(n.en, n.px, n.py - 12 * S, false);
-                }
-            });
-        }
-
-        function render(now) {
-            ctx.clearRect(0, 0, W, H);
-            layout();
-            findHover();
-            drawStars(now);
-            drawClusters();
-            drawOrbits();
-            drawBelt();
-            drawDrifters();
-            drawSun();
-            drawBodies();
-            drawNodes();
-        }
-
-        /* ---------- Loop ---------- */
-        function frame(now) {
-            var dt = lastT ? Math.min(100, now - lastT) : 16;
-            lastT = now;
-            update(dt);
-            render(now);
-            rafId = requestAnimationFrame(frame);
-        }
-
-        /* ---------- Sizing ---------- */
-        function resize() {
-            W = window.innerWidth;
-            H = window.innerHeight;
-            dpr = Math.min(window.devicePixelRatio || 1, 2);
-            canvas.width = Math.floor(W * dpr);
-            canvas.height = Math.floor(H * dpr);
-            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-            computeLayout();
-            skyR = Math.hypot(W, H) * 0.5 + 40;
-            sunX = homeX + par.x;
-            sunY = H / 2 + par.y;
-            generateSky();
-            if (reduced) render(performance.now());
-        }
-
-        /* ---------- Setup ---------- */
-        sprites.gold = makeSprite("212,178,92", 1);
-        sprites.cool = makeSprite("230,236,250", 1);
-        sprites.sun = makeSprite("255,214,120", 1);
-
-        initBodies();
-        resize();
-        window.addEventListener("resize", resize);
-
-        window.addEventListener("pointermove", function (e) {
-            pointer.x = e.clientX;
-            pointer.y = e.clientY;
-            pointer.valid = true;
-        }, { passive: true });
-
-        document.addEventListener("visibilitychange", function () {
-            if (reduced) return;
-            if (document.hidden) {
-                cancelAnimationFrame(rafId);
-                rafId = 0;
-                lastT = 0;
-            } else if (!rafId) {
-                rafId = requestAnimationFrame(frame);
-            }
-        });
-
-        if (!reduced) rafId = requestAnimationFrame(frame);
-    })();
-    </script>
+        formMessage.textContent = "Your registration request has been sent. Please wait while we verify it.";
+        form.reset();
+      } catch (error) {
+        console.error("Registration submission error:", error);
+        formMessage.textContent = "We could not send your registration. Please check your internet connection and try again.";
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Submit Registration";
+      }
+    });
+  })();
+  </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
