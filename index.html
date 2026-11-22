@@ -675,7 +675,7 @@
         placeOfBirth: document.getElementById("placeOfBirth").value.trim()
       };
 
-      submitButton.disabled = true;
+      window.Loader.show("Submitting..."); submitButton.disabled = true;
       submitButton.textContent = "Submitting...";
       formMessage.textContent = "";
 
@@ -692,14 +692,403 @@
         console.error("Registration submission error:", error);
         formMessage.textContent = "We could not send your registration. Please check your internet connection and try again.";
       } finally {
-        submitButton.disabled = false;
+        submitButton.disabled = false; window.Loader.hide();
         submitButton.textContent = "Submit Registration";
       }
     });
   })();
   </script>
+  <aside class="svc-column" id="svcColumn"></aside>
+
+  <script>
+  (() => {
+    const host = document.getElementById("svcColumn");
+    if (!host || typeof THREE === "undefined") return;
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const SERVICES = [
+      { no: "01", title: "Janam Kundli", icon: "kundli",
+        desc: "Your birth chart, drawn from your exact date, time and place of birth. It shows the planets across your 12 houses and your rising sign (Lagna).",
+        small: "Panchang: Tithi, Vara, Nakshatra, Yoga, Karana" },
+      { no: "02", title: "Vastu Paramarsh", icon: "vastu",
+        desc: "Guidance on arranging your home or office using traditional Vastu principles: the eight directions and the balance of the five elements.",
+        small: "The centre (Brahmasthan) is kept open and clear" },
+      { no: "03", title: "Grah Dosh Nivaran", icon: "grah",
+        desc: "Planetary remedies for challenges seen in your chart, such as mantra practice, charity and temple worship. These support your practice, not a guaranteed outcome.",
+        small: "Nine planets (Navagraha) read from your birth chart" },
+      { no: "04", title: "Ratan Salah", icon: "ratan",
+        desc: "Advice on whether a planetary gemstone suits your chart, based on your birth details. Always consult an astrologer before wearing any gemstone.",
+        small: "Nine gemstones (Navaratna), one for each planet" }
+    ];
+
+    const N = SERVICES.length, CARD_W = 1.08, CARD_H = 2.06, S = 2.3, HOLD = 2800;
+    const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+    function wrapText(ctx, text, x, y, maxW, lh) {
+      const words = text.split(" ");
+      let line = "";
+      for (const w of words) {
+        const test = line + w + " ";
+        if (ctx.measureText(test).width > maxW && line) {
+          ctx.fillText(line.trim(), x, y);
+          line = w + " ";
+          y += lh;
+        } else {
+          line = test;
+        }
+      }
+      ctx.fillText(line.trim(), x, y);
+      return y + lh;
+    }
+
+    function drawIcon(ctx, kind, cx, cy, r) {
+      ctx.save();
+      ctx.strokeStyle = "rgba(255,255,255,0.9)";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      if (kind === "kundli") {
+        ctx.strokeRect(cx - r, cy - r, r * 2, r * 2);
+        ctx.moveTo(cx, cy - r); ctx.lineTo(cx + r, cy); ctx.lineTo(cx, cy + r); ctx.lineTo(cx - r, cy); ctx.closePath();
+        ctx.moveTo(cx - r, cy - r); ctx.lineTo(cx + r, cy + r);
+        ctx.moveTo(cx + r, cy - r); ctx.lineTo(cx - r, cy + r);
+      } else if (kind === "vastu") {
+        ctx.strokeRect(cx - r, cy - r, r * 2, r * 2);
+        for (let i = 1; i <= 2; i++) {
+          const o = cx - r + (i * 2 * r) / 3;
+          ctx.moveTo(o, cy - r); ctx.lineTo(o, cy + r);
+          const q = cy - r + (i * 2 * r) / 3;
+          ctx.moveTo(cx - r, q); ctx.lineTo(cx + r, q);
+        }
+      } else if (kind === "grah") {
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.moveTo(cx + r * 0.12, cy); ctx.arc(cx, cy, r * 0.12, 0, Math.PI * 2);
+        for (let i = 0; i < 9; i++) {
+          const a = (i * Math.PI * 2) / 9;
+          const px = cx + Math.cos(a) * r * 0.7, py = cy + Math.sin(a) * r * 0.7;
+          ctx.moveTo(px + r * 0.14, py); ctx.arc(px, py, r * 0.14, 0, Math.PI * 2);
+        }
+      } else {
+        ctx.moveTo(cx, cy - r * 0.8); ctx.lineTo(cx + r * 0.8, cy - r * 0.2); ctx.lineTo(cx + r * 0.5, cy + r * 0.8);
+        ctx.lineTo(cx - r * 0.5, cy + r * 0.8); ctx.lineTo(cx - r * 0.8, cy - r * 0.2); ctx.closePath();
+        ctx.moveTo(cx - r * 0.8, cy - r * 0.2); ctx.lineTo(cx + r * 0.8, cy - r * 0.2);
+        ctx.moveTo(cx, cy - r * 0.8); ctx.lineTo(cx - r * 0.5, cy + r * 0.8);
+        ctx.moveTo(cx, cy - r * 0.8); ctx.lineTo(cx + r * 0.5, cy + r * 0.8);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function makeCardCanvas(s) {
+      const W = 420, H = 808;
+      const c = document.createElement("canvas");
+      c.width = W; c.height = H;
+      const x = c.getContext("2d");
+      const body = x.createLinearGradient(0, 0, 0, H);
+      body.addColorStop(0, "rgba(255,255,255,0.26)");
+      body.addColorStop(1, "rgba(255,255,255,0.08)");
+      x.fillStyle = body;
+      x.beginPath(); x.roundRect(10, 10, W - 20, H - 20, 36); x.fill();
+      x.lineWidth = 3; x.strokeStyle = "rgba(255,255,255,0.55)"; x.stroke();
+      const shine = x.createLinearGradient(0, 10, 0, 250);
+      shine.addColorStop(0, "rgba(255,255,255,0.22)");
+      shine.addColorStop(1, "rgba(255,255,255,0)");
+      x.fillStyle = shine;
+      x.beginPath(); x.roundRect(10, 10, W - 20, 240, 36); x.fill();
+      x.fillStyle = "#ffffff";
+      x.font = "500 20px Inter, system-ui, sans-serif";
+      x.fillText(s.no + " / 04", 40, 64);
+      drawIcon(x, s.icon, 210, 190, 72);
+      x.font = "600 32px Inter, system-ui, sans-serif";
+      x.fillText(s.title, 40, 330);
+      x.font = "400 18px Inter, system-ui, sans-serif";
+      x.fillStyle = "rgba(255,255,255,0.92)";
+      const y = wrapText(x, s.desc, 40, 372, 340, 27);
+      x.font = "300 15px Inter, system-ui, sans-serif";
+      x.fillStyle = "rgba(255,255,255,0.75)";
+      wrapText(x, s.small, 40, Math.max(y + 8, 760), 340, 22);
+      return c;
+    }
+    const NOISE = `
+float h2(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float vn(vec2 p) {
+  vec2 i = floor(p); vec2 f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f);
+  return mix(mix(h2(i), h2(i + vec2(1.0, 0.0)), u.x), mix(h2(i + vec2(0.0, 1.0)), h2(i + vec2(1.0, 1.0)), u.x), u.y);
+}`;
+
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setClearColor(0x000000, 0);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    host.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 50);
+    camera.position.z = 6;
+
+    const plane = new THREE.PlaneGeometry(CARD_W, CARD_H);
+
+    const GX = 56, GY = 70, NP = GX * GY;
+    const dustGeo = new THREE.BufferGeometry();
+    const dPos = new Float32Array(NP * 3), dUv = new Float32Array(NP * 2), dRnd = new Float32Array(NP * 4);
+    let k = 0;
+    for (let gy = 0; gy < GY; gy++) {
+      for (let gx = 0; gx < GX; gx++) {
+        dUv[k * 2] = (gx + 0.5 + (Math.random() - 0.5) * 0.6) / GX;
+        dUv[k * 2 + 1] = (gy + 0.5 + (Math.random() - 0.5) * 0.6) / GY;
+        for (let j = 0; j < 4; j++) dRnd[k * 4 + j] = Math.random();
+        k++;
+      }
+    }
+    dustGeo.setAttribute("position", new THREE.BufferAttribute(dPos, 3));
+    dustGeo.setAttribute("aUv", new THREE.BufferAttribute(dUv, 2));
+    dustGeo.setAttribute("aRnd", new THREE.BufferAttribute(dRnd, 4));
+    const sizeVec = new THREE.Vector2(CARD_W, CARD_H);
+
+    const groups = [], cardMats = [], dustMats = [];
+    SERVICES.forEach((s) => {
+      const tex = new THREE.CanvasTexture(makeCardCanvas(s));
+      const cm = new THREE.ShaderMaterial({
+        uniforms: { map: { value: tex }, uP: { value: 0 }, uSide: { value: 1 } },
+        vertexShader: `
+          varying vec2 vUv;
+          void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+        fragmentShader: NOISE + `
+          uniform sampler2D map; uniform float uP; uniform float uSide; varying vec2 vUv;
+          void main() {
+            vec4 c = texture2D(map, vUv);
+            float g = uSide > 0.0 ? 1.0 - vUv.y : vUv.y;
+            float t = mix(g, vn(vUv * vec2(6.0, 8.0)), 0.45);
+            if (uP > 0.001 && t < uP) discard;
+            vec3 col = c.rgb;
+            if (uP > 0.001) col = mix(col, vec3(1.0, 0.85, 0.55), (1.0 - smoothstep(uP, uP + 0.05, t)) * 0.9);
+            gl_FragColor = vec4(col, c.a);
+          }`,
+        transparent: true, depthWrite: false
+      });
+      const dm = new THREE.ShaderMaterial({
+        uniforms: { uP: { value: 0 }, uSide: { value: 1 }, uSize: { value: sizeVec }, uPx: { value: 2 } },
+        vertexShader: NOISE + `
+          attribute vec2 aUv; attribute vec4 aRnd;
+          uniform float uP; uniform float uSide; uniform vec2 uSize; uniform float uPx;
+          varying float vA;
+          void main() {
+            float g = uSide > 0.0 ? 1.0 - aUv.y : aUv.y;
+            float t = mix(g, vn(aUv * vec2(6.0, 8.0)), 0.45);
+            float e = (uP - t) / 0.35;
+            if (uP < 0.001 || e <= 0.0 || e >= 1.0) {
+              gl_Position = vec4(2.0, 2.0, 2.0, 1.0); gl_PointSize = 0.0; vA = 0.0; return;
+            }
+            vec2 base = (aUv - 0.5) * uSize;
+            vec2 drift = vec2((aRnd.x - 0.5) * 0.4 * e, uSide * (0.25 + 0.9 * aRnd.y) * e * e);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(base + drift, 0.0, 1.0);
+            gl_PointSize = uPx * (0.6 + 0.9 * aRnd.w) * (1.0 - 0.6 * e);
+            vA = (1.0 - smoothstep(0.5, 1.0, e)) * 0.9;
+          }`,
+        fragmentShader: `
+          varying float vA;
+          void main() {
+            float r = length(gl_PointCoord - 0.5);
+            if (r > 0.5 || vA <= 0.0) discard;
+            gl_FragColor = vec4(1.0, 0.92, 0.75, vA * (1.0 - r * 2.0));
+          }`,
+        transparent: true, depthWrite: false
+      });
+      const mesh = new THREE.Mesh(plane, cm);
+      const dust = new THREE.Points(dustGeo, dm);
+      dust.frustumCulled = false;
+      const g = new THREE.Group();
+      g.add(mesh, dust);
+      scene.add(g);
+      groups.push(g); cardMats.push(cm); dustMats.push(dm);
+    });
+
+    function resize() {
+      const w = Math.max(1, host.clientWidth), h = Math.max(1, host.clientHeight);
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      const px = renderer.getPixelRatio() * 2.2;
+      dustMats.forEach((m) => { m.uniforms.uPx.value = px; });
+    }
+    new ResizeObserver(resize).observe(host);
+    resize();
+
+    let pos = 0, target = 0, dir = 1, arrivedAt = 0;
+    let auto = !reduced, dragging = false, dragY = 0, dragPos = 0, wheelTimer = null;
+
+    function stopAuto() { auto = false; }
+
+    host.addEventListener("pointerdown", (e) => {
+      stopAuto();
+      dragging = true; dragY = e.clientY; dragPos = pos; target = pos;
+      host.setPointerCapture(e.pointerId);
+      host.classList.add("dragging");
+    });
+    host.addEventListener("pointermove", (e) => {
+      if (!dragging) return;
+      const px = Math.max(1, host.clientHeight * 0.5);
+      pos = target = clamp(dragPos + (dragY - e.clientY) / px, 0, N - 1);
+    });
+    const endDrag = () => {
+      if (!dragging) return;
+      dragging = false;
+      host.classList.remove("dragging");
+      target = clamp(Math.round(pos), 0, N - 1);
+    };
+    host.addEventListener("pointerup", endDrag);
+    host.addEventListener("pointercancel", endDrag);
+    host.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      stopAuto();
+      target = clamp(target + e.deltaY * 0.0018, 0, N - 1);
+      clearTimeout(wheelTimer);
+      wheelTimer = setTimeout(() => { target = clamp(Math.round(target), 0, N - 1); }, 160);
+    }, { passive: false });
+
+    function layout() {
+      for (let i = 0; i < N; i++) {
+        const d = i - pos, ad = Math.abs(d);
+        const g = groups[i];
+        g.position.set(0, d * S, -0.9 * ad);
+        g.rotation.x = d * 0.32;
+        g.scale.setScalar(Math.max(0.6, 1 - 0.12 * ad));
+        const p = clamp((ad - 0.55) / 0.75, 0, 1);
+        const side = d >= 0 ? 1 : -1;
+        cardMats[i].uniforms.uP.value = p;
+        cardMats[i].uniforms.uSide.value = side;
+        dustMats[i].uniforms.uP.value = p;
+        dustMats[i].uniforms.uSide.value = side;
+      }
+    }
+
+    function tick(now) {
+      if (auto && !dragging && Math.abs(target - pos) < 0.02) {
+        if (!arrivedAt) arrivedAt = now;
+        if (now - arrivedAt > HOLD) {
+          arrivedAt = 0;
+          if (target >= N - 1) dir = -1;
+          else if (target <= 0) dir = 1;
+          target = clamp(target + dir, 0, N - 1);
+        }
+      }
+      if (!dragging) pos += (target - pos) * 0.07;
+      layout();
+      renderer.render(scene, camera);
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  })();
+  </script>
+  <div class="ld-overlay show" id="loader">
+    <div class="ld-pill">
+      <canvas id="ldOrb"></canvas>
+      <span id="ldLabel">Loading...</span>
+    </div>
+  </div>
+
+  <script>
+  (() => {
+    const overlay = document.getElementById("loader");
+    const canvas = document.getElementById("ldOrb");
+    const label = document.getElementById("ldLabel");
+    const ctx = canvas.getContext("2d");
+    const SIZE = 46;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = SIZE * dpr;
+    canvas.height = SIZE * dpr;
+    canvas.style.width = SIZE + "px";
+    canvas.style.height = SIZE + "px";
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const N = 150, PERIOD = 3.6, TAU = Math.PI * 2, FOCAL = 3.5;
+    const DOT = "#F4F1EA";
+
+    // Points spread evenly over a sphere (Fibonacci lattice)
+    const PTS = [];
+    for (let i = 0; i < N; i++) {
+      const y = 1 - (i / (N - 1)) * 2;
+      const r = Math.sqrt(Math.max(0, 1 - y * y));
+      const th = i * 2.399963;
+      PTS.push({ x: Math.cos(th) * r, y: y, z: Math.sin(th) * r });
+    }
+
+    const clamp01 = u => Math.min(1, Math.max(0, u));
+
+    // Spins the sphere around Y, then tilts it around X
+    function rotate(p, ay, ax) {
+      const ca = Math.cos(ay), sa = Math.sin(ay);
+      const x1 = p.x * ca - p.z * sa;
+      let z1 = p.x * sa + p.z * ca;
+      const cb = Math.cos(ax), sb = Math.sin(ax);
+      const y2 = p.y * cb - z1 * sb;
+      z1 = p.y * sb + z1 * cb;
+      return { x: x1, y: y2, z: z1 };
+    }
+
+    function draw(now) {
+      requestAnimationFrame(draw);
+      if (!overlay.classList.contains("show")) return;
+      const t = reduced ? 0 : ((now / 1000) / PERIOD) % 1;
+      const R = SIZE * 0.27, cx = SIZE / 2, cy = SIZE / 2;
+      const items = [];
+      for (const p0 of PTS) {
+        // Each latitude swells slightly later than the one above it, so the swell travels down
+        const m = 1 + 0.13 * Math.sin(TAU * (t - 0.22 * (p0.y + 1)));
+        const p = rotate({ x: p0.x * m, y: p0.y * m, z: p0.z * m }, TAU * t, 0.36);
+        const per = FOCAL / (FOCAL - p.z);
+        const d = clamp01((p.z + 1.1) / 2.2);
+        items.push({
+          x: cx + p.x * R * per,
+          y: cy + p.y * R * per,
+          r: (0.6 + 1.4 * d) * per * 0.55,
+          a: (0.07 + 0.93 * Math.pow(d, 1.55)) * 0.9,
+          z: p.z
+        });
+      }
+      items.sort((a, b) => a.z - b.z);
+      ctx.clearRect(0, 0, SIZE, SIZE);
+      ctx.fillStyle = DOT;
+      for (const it of items) {
+        ctx.globalAlpha = Math.min(1, it.a);
+        ctx.beginPath();
+        ctx.arc(it.x, it.y, Math.max(it.r, 0.5), 0, TAU);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+    requestAnimationFrame(draw);
+
+    // Keeps the loader on screen for at least 900 ms so it never just flickers
+    let shownAt = performance.now();
+    let hideTimer = null;
+    window.Loader = {
+      show(text) {
+        clearTimeout(hideTimer);
+        label.textContent = text || "Loading...";
+        shownAt = performance.now();
+        overlay.classList.add("show");
+      },
+      hide() {
+        clearTimeout(hideTimer);
+        const wait = Math.max(0, 900 - (performance.now() - shownAt));
+        hideTimer = setTimeout(() => overlay.classList.remove("show"), wait);
+      }
+    };
+
+    if (document.readyState === "complete") window.Loader.hide();
+    else window.addEventListener("load", () => window.Loader.hide());
+  })();
+  </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
 
 
 
