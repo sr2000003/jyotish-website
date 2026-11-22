@@ -1,6 +1,6 @@
-// =====================================
+/* =====================================
    JYOTISH ASTROLOGY WEBSITE - 60FPS UI/UX MOTION SCRIPT
-   =====================================
+   ===================================== */
 
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFxGNPBwDeji84Y2S75U7JhRcyhsboEC8vDM7IOxN1KP0CFk-XV55r1lV9VFOK-qoa/exec";
 
