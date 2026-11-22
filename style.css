@@ -912,3 +912,15 @@ a,
 .controls {
   display: none !important;
 }
+
+
+
+/* Final position for the registration form (desktop) */
+@media (min-width: 761px) {
+  .glass-form {
+    left: 61%;
+    right: auto;
+    top: 2%;
+    transform: none;
+  }
+}
